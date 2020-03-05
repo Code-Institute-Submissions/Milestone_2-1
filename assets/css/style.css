@@ -71,3 +71,83 @@ ol:nth-child(even) {
     background: #F58787;
     cursor: pointer;
 }
+
+.cylinder {
+	position: absolute;
+	overflow: hidden;
+	margin: -69px auto 0 5px;
+	width: 90px;
+	height: 75px;
+	border-radius: 45px/25px;
+    /* background-color: rgba(160, 160, 160, 1); */
+    z-index: 99; 
+    -webkit-box-shadow: 18px -15px 12px -10px rgba(0,0,0,1);
+-moz-box-shadow: 18px -15px 12px -10px rgba(0,0,0,1);
+box-shadow: 18px -15px 12px -10px rgba(0,0,0,1);
+}
+
+.cylinder:after {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 90px;
+	height: 50px;
+	border-radius: 45px/25px;
+	/* background-color: rgb(196, 196, 196); */
+    content: '';
+
+    /* use this when green
+    -webkit-box-shadow: inset 0px 0px 10px 4px rgba(0,0,0,1);
+    -moz-box-shadow: inset 0px 0px 10px 4px rgba(0,0,0,1);
+    box-shadow: inset 0px 0px 10px 4px rgba(0,0,0,1); */
+   
+}
+
+.cylinder:before {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 90px;
+	height: 50px;
+	border-radius: 45px/25px;
+	/* background-color: rgba(160, 160, 160, 1); */
+    content: '';
+   
+}
+
+.playerOne {
+    background-color: rgba(255, 0, 0, .5);
+}
+.playerOne:after {
+    background-color: rgba(255, 64, 64, .5);
+}
+/* .playerOne:before {
+    background-color: rgba(107, 0, 0, .5);
+} */
+
+
+.playerTwo {
+    background-color: rgb(4, 0, 255);
+}
+.playerTwo:after {
+    background-color: rgb(83, 80, 255);
+}
+/* .playerTwo:before {
+    background-color: rgb(3, 0, 167);
+} */
+
+@keyframes drawArc {
+    0% { transform: rotate(0deg) translateX(0px) rotate(0deg) ;}
+    100%{ transform: rotate(-180deg) translateX(150px) rotate(180deg);  }
+}
+@-webkit-keyframes drawArc {
+    0% { -webkit-transform: rotate(0deg) translateX(0px) rotate(0deg) ;}
+    100%{ -webkit-transform: rotate(-180deg) translateX(150px) rotate(180deg);  }
+}
+
+
+.animateArc {
+    
+    animation: drawArc 3s linear 1 forwards;;
+    -webkit-animation: drawArc 3s linear 1 forwards;;
+}
