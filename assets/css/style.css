@@ -1,0 +1,73 @@
+/* $hex-size: 6em; // Only change size here. Best used with sizes from 5em - 10em. */
+
+body {
+    /* font-size: 7em; */
+}
+
+/* ----------------------------------------- */
+
+#grid {
+    width: 1800px;
+    line-height: 1.3em;
+}
+
+ol:nth-child(odd) {
+    position: relative;
+    left: 50px;
+}
+
+ol:nth-child(even) {
+    position: relative;
+    margin-top: -50px;
+    margin-bottom:-50px;
+}
+
+.hex {
+    position: absolute;
+    width: 100px; 
+    height: 62.74px;
+    background-color: #ffffff;
+    margin: 28.87px 0;
+    border-left: solid 2px #333333;
+    border-right: solid 2px #333333;
+    display: block;
+    text-align: center;
+    line-height: 60px;
+  }
+  
+  .hex:before,
+  .hex:after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    width: 69.71px;
+    height: 69.71px;
+    -webkit-transform: scaleY(0.5774) rotate(-45deg);
+    -ms-transform: scaleY(0.5774) rotate(-45deg);
+    transform: scaleY(0.5774) rotate(-45deg);
+    background-color: inherit;
+    left: 13.6447px;
+  }
+  
+  .hex:before {
+    top: -35.3553px;
+    border-top: solid 2.8284px #333333;
+    border-right: solid 2.8284px #333333;
+  }
+  
+  .hex:after {
+    bottom: -35.3553px;
+    border-bottom: solid 2.8284px #333333;
+    border-left: solid 2.8284px #333333;
+  }
+
+.hex:hover {
+    background: #F58787;
+    cursor: pointer;
+}
+
+
+.hex.test {
+    background: #F58787;
+    cursor: pointer;
+}
