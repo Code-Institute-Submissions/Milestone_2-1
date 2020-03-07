@@ -3,13 +3,19 @@ body {
 }
 
 div {
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Old versions of Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently  supported by Chrome, Opera and Firefox */
-  }
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently  supported by Chrome, Opera and Firefox */
+}
 
 /* ----------------------------------------- */
 
@@ -26,16 +32,18 @@ ol:nth-child(odd) {
 ol:nth-child(even) {
     position: relative;
     margin-top: -50px;
-    margin-bottom:-50px;
+    margin-bottom: -50px;
 }
 
- /*  */
+/*  */
+
 /* TODO - fix size */
- /*   */
+
+/*   */
 
 .hex {
     position: absolute;
-    width: 100px; 
+    width: 100px;
     height: 62.74px;
     background-color: #ffffff;
     margin: 28.87px 0;
@@ -44,10 +52,9 @@ ol:nth-child(even) {
     display: block;
     text-align: center;
     line-height: 60px;
-  }
-  
-  .hex:before,
-  .hex:after {
+}
+
+.hex:before, .hex:after {
     content: "";
     position: absolute;
     z-index: 1;
@@ -58,107 +65,118 @@ ol:nth-child(even) {
     transform: scaleY(0.5774) rotate(-45deg);
     background-color: inherit;
     left: 13.6447px;
-  }
-  
-  .hex:before {
+}
+
+.hex:before {
     top: -35.3553px;
     border-top: solid 2.8284px #333333;
     border-right: solid 2.8284px #333333;
-  }
-  
-  .hex:after {
+}
+
+.hex:after {
     bottom: -35.3553px;
     border-bottom: solid 2.8284px #333333;
     border-left: solid 2.8284px #333333;
-  }
+}
 
 .hex:hover {
     background: #F58787;
     cursor: pointer;
 }
 
-
-.hex.test {
-    background: #F58787;
+.hex.allowMove {
+    background: rgb(159, 135, 245);
     cursor: pointer;
 }
 
 .cylinder {
-	position: absolute;
-	overflow: hidden;
-	margin: -69px auto 0 5px;
-	width: 90px;
-	height: 75px;
-	border-radius: 45px/25px;
+    position: absolute;
+    overflow: hidden;
+    cursor: pointer;
+    /* margin: -69px auto 0 5px; */
+    margin-top: 23px;
+    margin-left: 6px;
+    width: 90px;
+    height: 75px;
+    border-radius: 45px/25px;
     /* background-color: rgba(160, 160, 160, 1); */
-    z-index: 99; 
-    -webkit-box-shadow: 18px -15px 12px -10px rgba(0,0,0,1);
--moz-box-shadow: 18px -15px 12px -10px rgba(0,0,0,1);
-box-shadow: 18px -15px 12px -10px rgba(0,0,0,1);
+    z-index: 99;
+    -webkit-box-shadow: 18px -15px 12px -10px rgba(0, 0, 0, 1);
+    -moz-box-shadow: 18px -15px 12px -10px rgba(0, 0, 0, 1);
+    box-shadow: 18px -15px 12px -10px rgba(0, 0, 0, 1);
 }
 
 .cylinder:after {
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 90px;
-	height: 50px;
-	border-radius: 45px/25px;
-	/* background-color: rgb(196, 196, 196); */
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 90px;
+    height: 50px;
+    border-radius: 45px/25px;
+    /* background-color: rgb(196, 196, 196); */
     content: '';
-
     /* use this when green
     -webkit-box-shadow: inset 0px 0px 10px 4px rgba(0,0,0,1);
     -moz-box-shadow: inset 0px 0px 10px 4px rgba(0,0,0,1);
     box-shadow: inset 0px 0px 10px 4px rgba(0,0,0,1); */
-   
 }
 
 .cylinder:before {
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	width: 90px;
-	height: 50px;
-	border-radius: 45px/25px;
-	/* background-color: rgba(160, 160, 160, 1); */
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 90px;
+    height: 50px;
+    border-radius: 45px/25px;
+    /* background-color: rgba(160, 160, 160, 1); */
     content: '';
-   
 }
 
 .playerOne {
     background-color: rgba(255, 0, 0, .5);
 }
+
 .playerOne:after {
     background-color: rgba(255, 64, 64, .5);
 }
+
 /* .playerOne:before {
     background-color: rgba(107, 0, 0, .5);
 } */
 
-
 .playerTwo {
     background-color: rgb(4, 0, 255);
 }
+
 .playerTwo:after {
     background-color: rgb(83, 80, 255);
 }
+
 /* .playerTwo:before {
     background-color: rgb(3, 0, 167);
 } */
 
 @keyframes drawArc {
-    0% { transform: rotate(0deg) translateX(0px) rotate(0deg) ;}
-    100%{ transform: rotate(-180deg) translateX(150px) rotate(180deg);  }
-}
-@-webkit-keyframes drawArc {
-    0% { -webkit-transform: rotate(0deg) translateX(0px) rotate(0deg) ;}
-    100%{ -webkit-transform: rotate(-180deg) translateX(150px) rotate(180deg);  }
+    0% {
+        transform: rotate(0deg) translateX(0px) rotate(0deg);
+    }
+    100% {
+        transform: rotate(-180deg) translateX(150px) rotate(180deg);
+    }
 }
 
+@-webkit-keyframes drawArc {
+    0% {
+        -webkit-transform: rotate(0deg) translateX(0px) rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(-180deg) translateX(150px) rotate(180deg);
+    }
+}
 
 .animateArc {
-    
-    animation: drawArc 3s linear 1 forwards;;
-    -webkit-animation: drawArc 3s linear 1 forwards;;
+    animation: drawArc 3s linear 1 forwards;
+    ;
+    -webkit-animation: drawArc 3s linear 1 forwards;
+    ;
 }

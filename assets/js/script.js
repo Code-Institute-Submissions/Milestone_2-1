@@ -7,10 +7,15 @@ function Game(halfSize = 3, nrOfPlayers = 2, allowHorizontal = true, allowBackwa
     this.halfSize = halfSize;
     this.nrOfRows = nrOfRows;
 
-    this.startGame = function() {
-    this.Grid = new gameGrid();
-    this.Grid.makeHexagonalShape(this.halfSize, this.nrOfRows);
-}
+    this.startGame = function () {
+        this.Grid = new gameGrid();
+        this.Grid.makeHexagonalShape(this.halfSize, this.nrOfRows);
+
+
+
+    }
+
+
     // this.gameStart = function () {
     //     makeHexagonalShape(this.halfSize, this.nrOfRows);
     // };
@@ -36,8 +41,9 @@ function gameGrid() {
         this.r = y;
         this.s = z;
 
-        if (this.s) {
+        if (typeof (z) == "number") {
             return new Hex(this.q, this.r, this.s);
+
         }
         else {
             return new Hex(this.q, -this.q - this.r, this.r);
@@ -53,33 +59,74 @@ function gameGrid() {
 
     //simple math
     function hexAdd(a, b) {
-        return anyHex(a.q + b.q, a.r + b.r, a.s + b.s);
+        let q = parseInt(a.q) + parseInt(b.q);
+        let r = parseInt(a.r) + parseInt(b.r);
+        let s = parseInt(a.s) + parseInt(b.s);
+
+        return anyHex(q, r, s);
     }
 
     function hexSubtract(a, b) {
-        return anyHex(a.q - b.q, a.r - b.r, a.s - b.s);
+        let q = parseInt(a.q) - parseInt(b.q);
+        let r = parseInt(a.r) - parseInt(b.r);
+        let s = parseInt(a.s) - parseInt(b.s);
+
+        return anyHex(q, r, s);
     }
 
     function hexMultiply(a, k) {
-        return anyHex(a.q * k, a.r * k, a.s * k);
+        let q = parseInt(a.q) * k;
+        let r = parseInt(a.r) * k;
+        let s = parseInt(a.s) * k;
+
+        return anyHex(q, r, s);
     }
 
     // console.log(hexMultiply(anyHex(1,2,3), 4));
 
-    function hexToPixel(HexAxial) {
+    function hexToPixel(hex) {
 
         //TODO maybe dynamic size from css
         let size = 60;
-        let x = size * (3. / 2 * HexAxial.q);
-        let y = size * (Math.sqrt(3) / 2 * HexAxial.q + Math.sqrt(3) * HexAxial.s);
+        let x = size * (3. / 2 * hex.q);
+        let y = size * (Math.sqrt(3) / 2 * hex.q + Math.sqrt(3) * hex.s);
 
         return new Point(x, y);
 
     }
 
+    function neighbour(center, direction) {
+
+        let dir = hexDirection(direction);
+        let result = hexAdd(center, dir);
+        // console.log("dir in [" + dir.q + "] [" + dir.s + "] center [" + center.q + "] [" + center.s + "] result [" + result.q + "] [" + result.s + "]");
+        return result;
+    }
+
+
+    function getHexRing(center, radius) {
+        let results = [];
+
+        let cube = hexAdd(center, hexMultiply(hexDirection(4), radius));
+        // let cube = hexAdd(center, hexDirection(4));
+
+        // console.log("cube [" + cube.q + "] [" + cube.r + "] [" + cube.s + "]");
+
+        for (let side = 0; side < 6; side++) {
+            for (let step = 0; step < radius; step++) {
+                results.push(cube);
+                cube = neighbour(cube, side);
+            }
+        }
+        return results;
+    }
+
+    function showNeighbours(Hex) {
+        return getHexRing(2);
+    }
 
     this.makeHexagonalShape = function (N, rows) {
-        console.log("make hexagonal called " + N);
+        // console.log("make hexagonal called " + N);
         let results = [];
         for (let q = -N; q <= N; q++) {
 
@@ -100,23 +147,24 @@ function gameGrid() {
                     //results.push(hex2);
 
                     //TODO make switch and use function to add player pucks
+                    //REMINDER - changed  $("#grid div").first() to $("#grid")
 
                     $("#grid").prepend(`<div class='hex' style="top:${coord.x}px; left:${coord.y}px"  hex="${axialR} ${axialQ}">
                     ${axialR}xxxxxxxxx${axialQ}</div>`);
 
                     if (axialQ == 0) {
-                        $("#grid div").first().append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}"></div>`);
+                        $("#grid").append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
                     }
                     else if ((axialQ == 1) && (rows == 2)) {
-                        $("#grid div").first().append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}"></div>`);
+                        $("#grid").append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
                     }
 
                     else if (axialQ == 2 * N) {
-                        $("#grid div").first().append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}"></div>`);
+                        $("#grid").append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
                     }
 
                     else if ((axialQ == 2 * N - 1) && (rows == 2)) {
-                        $("#grid div").first().append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}"></div>`);
+                        $("#grid").append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
                     }
 
 
@@ -127,58 +175,91 @@ function gameGrid() {
                 }
             }
         }
+
+
+        function showMove(item, index) {
+
+            $(`[hex='${item.q} ${item.s}']`).addClass("allowMove");
+
+        }
+        $(".cylinder").click(function () {
+
+            // TODO put this back
+            // console.log($(this).attr("axial"));
+            let t = $(this).attr("axial").split(" ");
+            let currentHex = anyHex(t[0], t[1]);
+
+            if (last && (last.attr("axial") != $(this).attr("axial"))) {
+                blinkingStop(last);
+            }
+            last = $(this);
+            blinking($(this));
+
+            let neighs = getHexRing(anyHex(t[0], t[1]), 1);
+            $("div .allowMove").removeClass("allowMove");
+            neighs.forEach(showMove);
+        });
+
+
+
+
         // console.log(results);
         return results;
     }
 
-    function hexRing(radius) {
-        let results = [];
-        let direction = anyHex(-1, 1, 0);
-        var H = anyHex(direction.x * radius, direction.y * radius, direction.z * radius);
-        for (var side = 0; side < 6; side++) {
-            for (var step = 0; step < radius; step++) {
-                results.push(H);
-    
-                H = H.neighbor(side);
-            }
-        }
-        return results;
-    }
-    
+
+
+    $(document).on('click', ".allowMove", function moveOne() {
+
+        let t = $(this).attr("hex").split(" ");
+        let currentHex = anyHex(t[0], t[1]);
+        console.log(t[0], t[1], last.attr("axial"));
+
+         coordX = $(this).css("top");
+        coordY = $(this).css("left");
+
+               $(last).animate(
+            {
+                top: `${coordX}`,
+                left: `${coordY}`
+            }, 200
+        );
+        last.attr("axial", $(this).attr("hex"));
+
+    });
+
+
+
 }; //END gameGrid
 
 
 
 
 
-
 var timer;
-
-
-$(".cylinder").click(function () {
-
-    // TODO put this back
-    console.log($(this).attr("axial"));
-    let t = $(this).attr("axial").split(" ");
-    let currentAxial = new HexAxial(t[0], t[1]);
-    blinking($(this));
-    // $(this).addClass("animateArc");
-    //TODO FIX ZINDEX
-    // findPossibleMoves()
-    neighboursOnRadius = getNeighbours(currentAxial);
-
-    function getNeighbours(axial) {
-        console.log(axial.q, axial.r);
-    }
-
-});
+var last;
 
 
 function blinking(elm) {
-    timer = setInterval(blink, 200);
-    function blink() {
-        $(elm).fadeTo(200, 0.9, function () { $(elm).fadeTo(200, 1.0); });
+
+    if (!($(elm).hasClass("blinking"))) {
+        // console.log("start blinking " + $(elm).attr("axial") );
+        timer = setInterval(blink, 10);
+        $(elm).addClass("blinking");
+        function blink() {
+            // $(elm).fadeTo(20, 0.7, function () { $(elm).fadeTo(20, 1.0); });
+        }
     }
+
+}
+
+function blinkingStop(elm) {
+    elm.stop(true, true);
+    clearTimeout(timer);
+    clearInterval(timer);
+    $(elm).removeClass("blinking");
+
+    // console.log("blStop" + $(elm).attr("axial"));
 }
 
 
@@ -208,8 +289,11 @@ function blinking(elm) {
 
 $(document).ready(function () {
     let myGame = new Game();
-     myGame.startGame();
+    myGame.startGame();
     // console.log("doc ready: " + myGame.gameStart());
+
+
+
 });
 
 
@@ -218,7 +302,7 @@ $(document).ready(function () {
 // ADMIN
 $("#generate").click(function () {
     $("#grid").empty();
-    
+
     let myGame = new Game();
 
     myGame.halfSize = parseInt($("#half_size").val());
@@ -230,7 +314,7 @@ $("#generate").click(function () {
 
 
 
-     myGame.startGame();
+    myGame.startGame();
     // console.log("button: " + myGame.gameStart());
 
 });
