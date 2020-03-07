@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milestone 2</title>
+
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <div class="admin_controls">
+
+        <label for="half_size">Grid Size</label>
+        <select name="half_size" id="half_size">
+            <option value="1">Width: 3</option>
+            <option value="2" selected>Width: 5</option>
+            <option value="3">Width: 7</option>
+            <option value="4">Width: 9</option>
+            <option value="5">Width: 11</option>
+            <option value="6">Width: 13</option>
+            <option value="7">Width: 15</option>
+            <option value="8">Width: 17</option>
+        </select>
+
+        <hr>
+
+
+        <label for="players">Nr. of players</label>
+        <select name="players" id="players">
+            <option value="0" selected>Two Players</option>
+            <option value="1">One Player vs. Computer</option>
+        </select>
+
+        <hr>
+
+        <label for="allow_horizontal">Move horizontal</label>
+        <input type="checkbox" name="allow_horizontal" id="allow_horizontal" value="1">
+
+        <label for="allow_backwards">Move backwards</label>
+        <input type="checkbox" name="allow_backwards" id="allow_backwards" value="1">
+
+        <hr>
+
+        <label for="allow_nojumps1">Free move </label>
+        <input type="radio" name="allow_nojumps" id="allow_nojumps1" value="0" checked>
+        <label for="allow_nojumps2">Only allow jumps if possible</label>
+        <input type="radio" name="allow_nojumps" id="allow_nojumps2" value="1">
+        <hr>
+
+        <label for="nr_of_rows1">Player rows : One</label>
+        <input type="radio" value="1" name="nr_of_rows" id="nr_of_rows1">
+        <label for="nr_of_rows2"> Two</label>
+        <input type="radio" value="2" name="nr_of_rows" id="nr_of_rows2" checked >
+
+        <hr>
+
+        <button id="generate">Generate</button>
+
+
+    </div>
+
+
+    <div id="grid">
+    </div>
+    <script type="text/javascript" src="assets/js/script.js"></script>
+</body>
+
+</html>

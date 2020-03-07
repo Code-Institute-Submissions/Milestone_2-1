@@ -1,140 +1,176 @@
+function Game(halfSize = 3, nrOfPlayers = 2, allowHorizontal = true, allowBackwards = false, allowNoJumps = false, nrOfRows = 2) {
 
-function HexCube(q, r, s) {
-    this.x = q;
-    this.y = r;
-    this.z = s;
+    this.nrOfPlayers = nrOfPlayers;
+    this.allowHorizontal = allowHorizontal;
+    this.allowBacwards = allowBackwards;
+    this.allowNoJumps = allowNoJumps;
+    this.halfSize = halfSize;
+    this.nrOfRows = nrOfRows;
 
+    this.startGame = function() {
+    this.Grid = new gameGrid();
+    this.Grid.makeHexagonalShape(this.halfSize, this.nrOfRows);
+}
+    // this.gameStart = function () {
+    //     makeHexagonalShape(this.halfSize, this.nrOfRows);
+    // };
 
 };
 
-function HexAxial(a, b) {
-    this.q = a;
-    this.r = b;
-};
 
-function Point(a, b) {
-    this.x = a;
-    this.y = b;
-}
+function gameGrid() {
 
+    function Hex(x, y, z) {
+        this.q = x;
+        this.r = y;
+        this.s = z;
+    };
 
+    function Point(a, b) {
+        this.x = a;
+        this.y = b;
+    }
 
-function cube_to_axial(HexCube) {
-    var q = HexCube.x;
-    var r = HexCube.z;
-    return new HexAxial(q, r);
-}
+    anyHex = function (x, y, z) {
+        this.q = x;
+        this.r = y;
+        this.s = z;
 
-function axial_to_cube(HexAxial) {
-    var x = HexAxial.q;
-    var z = HexAxial.r;
-    var y = -x - z;
-    return new HexCube(x, y, z);
-}
-
-
-function makeHexMap(mapRadius) {
-
-    let mapArray = [];
-    for (q = -mapRadius; q <= mapRadius; q++) {
-
-
-
-        let r1 = Math.max(-mapRadius, -q - mapRadius);
-        let r2 = Math.min(mapRadius, -q + mapRadius);
-
-
-        for (r = r1; r <= r2; r++) {
-            mapArray.push([q, r, -q - r]);
+        if (this.s) {
+            return new Hex(this.q, this.r, this.s);
+        }
+        else {
+            return new Hex(this.q, -this.q - this.r, this.r);
         }
     }
-    return mapArray;
-}
 
-//    console.log(makeHexMap(3));
+    const hexDirections = [anyHex(1, 0, -1), anyHex(1, -1, 0), anyHex(0, -1, 1),
+    anyHex(-1, 0, 1), anyHex(-1, 1, 0), anyHex(0, 1, -1)];
 
+    function hexDirection(direction) {
+        return hexDirections[direction];
+    }
 
+    //simple math
+    function hexAdd(a, b) {
+        return anyHex(a.q + b.q, a.r + b.r, a.s + b.s);
+    }
 
-// use flat top
-function hexToPixel(HexAxial) {
+    function hexSubtract(a, b) {
+        return anyHex(a.q - b.q, a.r - b.r, a.s - b.s);
+    }
 
-    let size = 60;
+    function hexMultiply(a, k) {
+        return anyHex(a.q * k, a.r * k, a.s * k);
+    }
 
-    let x = size * (3. / 2 * HexAxial.q);
-    let y = size * (Math.sqrt(3) / 2 * HexAxial.q + Math.sqrt(3) * HexAxial.r);
+    // console.log(hexMultiply(anyHex(1,2,3), 4));
 
-    return new Point(x, y);
+    function hexToPixel(HexAxial) {
 
-}
+        //TODO maybe dynamic size from css
+        let size = 60;
+        let x = size * (3. / 2 * HexAxial.q);
+        let y = size * (Math.sqrt(3) / 2 * HexAxial.q + Math.sqrt(3) * HexAxial.s);
 
-// pointy top
-// function hexToPixel(HexAxial) {
-//     let size = 60;
-//     let x = size * (Math.sqrt(3) * HexAxial.q  +  Math.sqrt(3)/2 * HexAxial.r)
-//     let y = size * (                         3./2 * HexAxial.r)
-//     return new Point(x, y);
-// }
+        return new Point(x, y);
 
-let testHex = new HexAxial(3, 3);
-hexToPixel(testHex);
-console.log(hexToPixel(testHex));
-
-
-
-function makeHexagonalShape(N) {
-    let results = [];
-    for (let q = -N; q <= N; q++) {
+    }
 
 
-        // for (let r = -N; r <= N; r++) {
-        for (let r = N; r >= -N; r--) {
-            let hex = new HexCube(q + N, r + N, -q - r + N);
+    this.makeHexagonalShape = function (N, rows) {
+        console.log("make hexagonal called " + N);
+        let results = [];
+        for (let q = -N; q <= N; q++) {
 
-            let axialQ = q + N;
-            let axialR = -q - r + N;
+            // for (let r = -N; r <= N; r++) {
+            for (let r = N; r >= -N; r--) {
+
+                let hex = anyHex(q + N, r + N, -q - r + N);
+
+                let axialQ = q + N;
+                let axialR = -q - r + N;
+
+                let hex2 = anyHex(axialQ, axialR);
+
+                coord = hexToPixel(hex2);
+
+                if (((Math.abs(q) + Math.abs(r) + Math.abs(-q - r)) / 2) <= N) {
+                    results.push(hex);
+                    //results.push(hex2);
+
+                    //TODO make switch and use function to add player pucks
+
+                    $("#grid").prepend(`<div class='hex' style="top:${coord.x}px; left:${coord.y}px"  hex="${axialR} ${axialQ}">
+                    ${axialR}xxxxxxxxx${axialQ}</div>`);
+
+                    if (axialQ == 0) {
+                        $("#grid div").first().append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}"></div>`);
+                    }
+                    else if ((axialQ == 1) && (rows == 2)) {
+                        $("#grid div").first().append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}"></div>`);
+                    }
+
+                    else if (axialQ == 2 * N) {
+                        $("#grid div").first().append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}"></div>`);
+                    }
+
+                    else if ((axialQ == 2 * N - 1) && (rows == 2)) {
+                        $("#grid div").first().append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}"></div>`);
+                    }
 
 
-            let hex2 = new HexAxial(axialQ, axialR);
-
-            coord = hexToPixel(hex2);
-
-            if (((Math.abs(q) + Math.abs(r) + Math.abs(-q - r)) / 2) <= N) {
-                results.push(hex);
-                //results.push(hex2);
-                $("#grid").prepend(`<div class='hex' style="top:${coord.x}px; left:${coord.y}px">${axialR}xxxxxxxxx${axialQ}</div>`);
-
-                if ((axialQ == 0 || axialQ == 1)) {
-                    $("#grid div").first().append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}"></div>`);
                 }
-                else if ((axialQ == 2 * N) || (axialQ == 2 * N - 1)) {
-                    $("#grid div").first().append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}"></div>`);
-                }
 
+                else {
+                    //   $("#grid").append(`<div class='hex test' style="top:${coord.x}px; left:${coord.y}px">${axialR}xxxxxxxxx${axialQ}</div>`); 
+                }
             }
-
-            else { $("#grid").append(`<div class='hex test' style="top:${coord.x}px; left:${coord.y}px">${axialR}xxxxxxxxx${axialQ}</div>`); }
-
-            // console.log(axialR, axialQ);
         }
-
-
-
-
-
+        // console.log(results);
+        return results;
     }
-    return results;
-}
 
-console.log(makeHexagonalShape(2));
+    function hexRing(radius) {
+        let results = [];
+        let direction = anyHex(-1, 1, 0);
+        var H = anyHex(direction.x * radius, direction.y * radius, direction.z * radius);
+        for (var side = 0; side < 6; side++) {
+            for (var step = 0; step < radius; step++) {
+                results.push(H);
+    
+                H = H.neighbor(side);
+            }
+        }
+        return results;
+    }
+    
+}; //END gameGrid
+
+
+
+
+
 
 var timer;
 
 
 $(".cylinder").click(function () {
+
+    // TODO put this back
     console.log($(this).attr("axial"));
+    let t = $(this).attr("axial").split(" ");
+    let currentAxial = new HexAxial(t[0], t[1]);
     blinking($(this));
-    $(this).addClass("animateArc");
+    // $(this).addClass("animateArc");
     //TODO FIX ZINDEX
+    // findPossibleMoves()
+    neighboursOnRadius = getNeighbours(currentAxial);
+
+    function getNeighbours(axial) {
+        console.log(axial.q, axial.r);
+    }
+
 });
 
 
@@ -154,9 +190,9 @@ function blinking(elm) {
 //     $target.css("-o-transform", "rotate(" + degrees + "deg)"); /* Opera */
 //     $target.css("transform", "rotate(" + degrees + "deg)"); 
 //   };
-  
+
 //   var rotation = 0;
-  
+
 //   //Set css() of elements
 //   $( document ).ready(function(){
 //     setInterval(function() {
@@ -167,3 +203,35 @@ function blinking(elm) {
 
 // TODO Add 1 oor 2 rows of player puck
 //TODO add green pieces count for players
+
+
+
+$(document).ready(function () {
+    let myGame = new Game();
+     myGame.startGame();
+    // console.log("doc ready: " + myGame.gameStart());
+});
+
+
+
+
+// ADMIN
+$("#generate").click(function () {
+    $("#grid").empty();
+    
+    let myGame = new Game();
+
+    myGame.halfSize = parseInt($("#half_size").val());
+    myGame.nrOfPlayers = $("#players").val();
+    myGame.allowHorizontal = $("#allow_horizontal").val();
+    myGame.allowBackwards = $("#allow_backwards").val();
+    myGame.allowNoJumps = $("[name='allow_nojumps']").val();
+    myGame.nrOfRows = $("[name='nr_of_rows']").val();
+
+
+
+     myGame.startGame();
+    // console.log("button: " + myGame.gameStart());
+
+});
+

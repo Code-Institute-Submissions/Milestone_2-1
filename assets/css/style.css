@@ -1,14 +1,21 @@
-/* $hex-size: 6em; // Only change size here. Best used with sizes from 5em - 10em. */
-
 body {
     /* font-size: 7em; */
 }
 
+div {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently  supported by Chrome, Opera and Firefox */
+  }
+
 /* ----------------------------------------- */
 
 #grid {
-    width: 1800px;
-    line-height: 1.3em;
+    margin: 50px;
+    position: relative;
 }
 
 ol:nth-child(odd) {
@@ -21,6 +28,10 @@ ol:nth-child(even) {
     margin-top: -50px;
     margin-bottom:-50px;
 }
+
+ /*  */
+/* TODO - fix size */
+ /*   */
 
 .hex {
     position: absolute;
