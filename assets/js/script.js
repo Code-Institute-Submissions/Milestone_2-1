@@ -1,4 +1,4 @@
-function Game(halfSize = 3, nrOfPlayers = 2, allowHorizontal = true, allowBackwards = false, secondChance = true, allowNoJumps = false, nrOfRows = 2, horizontal = true) {
+function Game(halfSize = 3, nrOfPlayers = 2, allowHorizontal = true, allowBackwards = false, secondChance = 1, allowNoJumps = false, nrOfRows = 2, horizontal = true) {
 
     this.nrOfPlayers = nrOfPlayers;
     this.allowHorizontal = allowHorizontal;
@@ -11,17 +11,13 @@ function Game(halfSize = 3, nrOfPlayers = 2, allowHorizontal = true, allowBackwa
 
     this.playerTurn = 1;
 
-    this.GetTurn = function () {
-        return this.playerTurn;
-    }
-    this.setTurn = function(turn) {
-        this.playerTurn = turn;
-    }
+    // console.log(this.secondChance);
 
     this.startGame = function () {
         this.Grid = new gameGrid();
         this.Grid.makeHexagonalShape(this.halfSize, this.nrOfRows, this.horizontal);
-        this.Grid.playerTurn(this.playerTurn);
+        this.Grid.startPlayerTurn(this.playerTurn);
+
     }
 
 
@@ -34,7 +30,12 @@ function Game(halfSize = 3, nrOfPlayers = 2, allowHorizontal = true, allowBackwa
 
 function gameGrid() {
 
-    this.bar = {parent: this}
+    currentChance = myGame.secondChance;
+    // console.log("grid start " + myGame.secondChance);
+    // let currentChance = 99;
+    currentPlayer = myGame.playerTurn;
+
+    // console.log("grid chance " + currentChance + " grid player " + currentPlayer);
 
     function Hex(x, y, z) {
         this.q = x;
@@ -136,10 +137,6 @@ function gameGrid() {
             }
         }
         return results;
-    }
-
-    function showNeighbours(Hex) {
-        return getHexRing(2);
     }
 
     this.makeHexagonalShape = function (N, rows, horizontal) {
@@ -258,41 +255,32 @@ function gameGrid() {
         }
 
 
-        function showMove(item, index) {
-
-            $(`[hex='${item.q} ${item.s}']`).addClass("allowMove");
-
-        }
-
-        $(".cylinder").click(function () {
-
-
-            // TODO put this back
-            // console.log($(this).attr("axial"));
-            $(".blink").removeClass("blink");
-            $(this).addClass("blink");
-
-            let t = $(this).attr("axial").split(" ");
-
-            // REMOVED - conflict with movement animation
-            // if (last && (last.attr("axial") != $(this).attr("axial"))) {
-            //     blinkingStop(last);
-            // }
-            last = $(this);
-            // blinking($(this));
-
-            let neighs = getHexRing(anyHex(t[0], t[1]), 1);
-            $("div .allowMove").removeClass("allowMove");
-            neighs.forEach(showMove);
-        });
-
-
-
+        // $(".cylinder").click(function () {
+        //     // TODO put this back
+        //     // console.log($(this).attr("axial"));
+        //     $(".blink").removeClass("blink");
+        //     $(this).addClass("blink");
+        //     let t = $(this).attr("axial").split(" ");
+        //     // REMOVED - conflict with movement animation
+        //     // if (last && (last.attr("axial") != $(this).attr("axial"))) {
+        //     //     blinkingStop(last);
+        //     // }
+        //     last = $(this);
+        //     // blinking($(this));
+        //     let neighs = getHexRing(anyHex(t[0], t[1]), 1);
+        //     $("div .allowMove").removeClass("allowMove");
+        //     neighs.forEach(showMove);
+        // });
 
         // console.log(results);
         return results;
     }
 
+    function showMove(item) {
+
+        $(`[hex='${item.q} ${item.s}']:not([player]`).addClass("allowMove");
+
+    }
 
 
     $(document).on('click', ".allowMove", function moveOne() {
@@ -317,17 +305,70 @@ function gameGrid() {
 
             }, 200, function () {
                 last.attr("axial", lastUsehex);
-                clickHex.attr("palyer", lastPlayer);
+                clickHex.attr("player", lastPlayer);
                 $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
+
+                // console.log("animate chance " + currentChance);
+                if (currentChance === 1) {
+                    if (currentPlayer == 1) prepare(2); else prepare(1);
+                }
+                else {
+                    //TODO USE TEMPLATE LITERAL
+                    if (currentPlayer == 1) {
+
+                        $(".playerOne").unbind("click");
+
+                    } else {
+
+                        $(".playerTwo").unbind("click");
+
+                    }
+                }
             }
         );
 
+
     });
 
+    function playerPiceSelect(el) {
+        $(".blink").removeClass("blink");
+        $(el).addClass("blink");
 
-    this.playerTurn = function (player) {
-        // console.log("aa");
-        $("h2 span").html(player);
+        let t = $(el).attr("axial").split(" ");
+
+        // REMOVED - conflict with movement animation
+        // if (last && (last.attr("axial") != $(this).attr("axial"))) {
+        //     blinkingStop(last);
+        // }
+        last = $(el);
+        // blinking($(this));
+
+        let neighs = getHexRing(anyHex(t[0], t[1]), 1);
+        $("div .allowMove").removeClass("allowMove");
+        neighs.forEach(showMove);
+    }
+
+    function prepare(player) {
+        // console.log("prepare");
+        $("h2 span").html(player + " ");
+        $("#player_turn").toggleClass("playerTwo");
+
+        $("div .allowMove").removeClass("allowMove");
+        $(last).removeClass("blink");
+
+        if (player == 1) {
+            $(".playerOne").bind("click", function () { playerPiceSelect($(this)) });
+            $(".playerTwo").unbind("click");
+            currentPlayer = 1;
+        } else {
+            $(".playerTwo").bind("click", function () { playerPiceSelect($(this)) });
+            $(".playerOne").unbind("click");
+            currentPlayer = 2;
+        }
+    }
+    this.startPlayerTurn = function (player) {
+
+        prepare(player);
     }
 
 
@@ -385,12 +426,44 @@ function blinkingStop(elm) {
 
 
 
+
+
+
+function isDoubleClicked(element) {
+    //if already clicked return TRUE to indicate this click is not allowed
+    if (element.data("isclicked")) return true;
+
+    //mark as clicked for 1 second
+    element.data("isclicked", true);
+    setTimeout(function () {
+        element.removeData("isclicked");
+    }, 500);
+
+    //return FALSE to indicate this click was allowed
+    return false;
+}
+
+let myGame;
+
 $(document).ready(function () {
-    let myGame = new Game();
+    myGame = new Game();
     myGame.startGame();
     // console.log("doc ready: " + myGame.gameStart());
 
+    $("#end_turn").click(function () {
 
+        //prevent accidentaly skipped turn
+        if (isDoubleClicked($(this))) return;
+
+        if (myGame.playerTurn == 1) {
+            myGame.playerTurn = 2;
+        } else {
+            myGame.playerTurn = 1;
+        }
+
+        myGame.Grid.startPlayerTurn(myGame.playerTurn);
+        // console.log(myGame.Grid);
+    });
 
 });
 
@@ -401,25 +474,21 @@ $(document).ready(function () {
 $("#generate").click(function () {
     $("#grid").empty();
 
-    let myGame = new Game();
+    myGame = new Game();
 
     myGame.halfSize = parseInt($("#half_size").val());
     myGame.nrOfPlayers = parseInt($("#players").val());
     myGame.allowHorizontal = parseInt($("#allow_horizontal").val());
     myGame.allowBackwards = parseInt($("#allow_backwards").val());
-    myGame.secondChance = parseInt($("#second_chance").val());
+    myGame.secondChance = $("#second_chance:checked").val() ? parseInt($("#second_chance:checked").val()) : 1;
     myGame.allowNoJumps = parseInt($("[name='allow_nojumps']:checked").val());
     myGame.nrOfRows = parseInt($("[name='nr_of_rows']:checked").val());
     myGame.horizontal = parseInt($("[name='horiz']:checked").val());
 
-    // console.log(parseInt($("[name='horiz']:checked").val()));
-    // console.log(parseInt($("[name='nr_of_rows']:checked").val()));
+    //   console.log($("#second_chance:checked").val() ? parseInt($("#second_chance:checked").val()) : 1);
 
     myGame.startGame();
-    // console.log("button: " + myGame.gameStart());
+
 
 });
 
-$("#end_turn").click(function () {
-console.log("end");
-});    
