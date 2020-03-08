@@ -17,10 +17,21 @@ div {
     /* Non-prefixed version, currently  supported by Chrome, Opera and Firefox */
 }
 
+h2 {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+hr {
+    padding: 0;
+    margin: 0;
+}
+
 /* ----------------------------------------- */
 
 #grid {
-    margin: 50px;
+    margin-top: 20px;
     position: relative;
 }
 
@@ -86,6 +97,11 @@ ol:nth-child(even) {
 
 .hex.allowMove {
     background: rgb(159, 135, 245);
+    cursor: pointer;
+}
+
+.hex.allowMove:hover {
+    background: rgba(203, 189, 255);
     cursor: pointer;
 }
 
@@ -155,6 +171,23 @@ ol:nth-child(even) {
 /* .playerTwo:before {
     background-color: rgb(3, 0, 167);
 } */
+
+@keyframes blink {
+    50% {
+        opacity: 0.75;
+    }
+}
+
+@-webkit-keyframes blink {
+    50% {
+        opacity: 0.75;
+    }
+}
+
+.blink {
+    animation: blink .5s step-start 0s infinite;
+    -webkit-animation: blink .5s step-start 0s infinite;
+}
 
 @keyframes drawArc {
     0% {

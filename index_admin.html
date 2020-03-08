@@ -7,7 +7,8 @@
     <title>Milestone 2</title>
 
     <link rel="stylesheet" href="assets/css/style.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -17,8 +18,8 @@
         <label for="half_size">Grid Size</label>
         <select name="half_size" id="half_size">
             <option value="1">Width: 3</option>
-            <option value="2" selected>Width: 5</option>
-            <option value="3">Width: 7</option>
+            <option value="2">Width: 5</option>
+            <option value="3" selected>Width: 7</option>
             <option value="4">Width: 9</option>
             <option value="5">Width: 11</option>
             <option value="6">Width: 13</option>
@@ -45,6 +46,11 @@
 
         <hr>
 
+        <label for="second_chance">Second Chance</label>
+        <input type="checkbox" name="second_chance" id="second_chance" value="1" checked>
+
+        <hr>
+
         <label for="allow_nojumps1">Free move </label>
         <input type="radio" name="allow_nojumps" id="allow_nojumps1" value="0" checked>
         <label for="allow_nojumps2">Only allow jumps if possible</label>
@@ -54,16 +60,25 @@
         <label for="nr_of_rows1">Player rows : One</label>
         <input type="radio" value="1" name="nr_of_rows" id="nr_of_rows1">
         <label for="nr_of_rows2"> Two</label>
-        <input type="radio" value="2" name="nr_of_rows" id="nr_of_rows2" checked >
+        <input type="radio" value="2" name="nr_of_rows" id="nr_of_rows2" checked>
+        <label for="nr_of_rows3"> Three</label>
+        <input type="radio" value="3" name="nr_of_rows" id="nr_of_rows3">
+
+        <hr>
+
+        <label for="horizontal1">Game orientation: Horizontal</label>
+        <input type="radio" value="1" name="horiz" id="horizontal1" checked>
+        <label for="horizontal2"> Vertical</label>
+        <input type="radio" value="0" name="horiz" id="horizontal2">
 
         <hr>
 
         <button id="generate">Generate</button>
-
+        <button id="end_turn">End Turn</button>
 
     </div>
 
-
+    <h2 id="player_turn">Player <span></span> Move</h2>
     <div id="grid">
     </div>
     <script type="text/javascript" src="assets/js/script.js"></script>

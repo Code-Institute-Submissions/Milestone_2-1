@@ -1,18 +1,27 @@
-function Game(halfSize = 3, nrOfPlayers = 2, allowHorizontal = true, allowBackwards = false, allowNoJumps = false, nrOfRows = 2) {
+function Game(halfSize = 3, nrOfPlayers = 2, allowHorizontal = true, allowBackwards = false, secondChance = true, allowNoJumps = false, nrOfRows = 2, horizontal = true) {
 
     this.nrOfPlayers = nrOfPlayers;
     this.allowHorizontal = allowHorizontal;
     this.allowBacwards = allowBackwards;
+    this.secondChance = secondChance;
     this.allowNoJumps = allowNoJumps;
     this.halfSize = halfSize;
     this.nrOfRows = nrOfRows;
+    this.horizontal = horizontal;
+
+    this.playerTurn = 1;
+
+    this.GetTurn = function () {
+        return this.playerTurn;
+    }
+    this.setTurn = function(turn) {
+        this.playerTurn = turn;
+    }
 
     this.startGame = function () {
         this.Grid = new gameGrid();
-        this.Grid.makeHexagonalShape(this.halfSize, this.nrOfRows);
-
-
-
+        this.Grid.makeHexagonalShape(this.halfSize, this.nrOfRows, this.horizontal);
+        this.Grid.playerTurn(this.playerTurn);
     }
 
 
@@ -24,6 +33,8 @@ function Game(halfSize = 3, nrOfPlayers = 2, allowHorizontal = true, allowBackwa
 
 
 function gameGrid() {
+
+    this.bar = {parent: this}
 
     function Hex(x, y, z) {
         this.q = x;
@@ -95,6 +106,12 @@ function gameGrid() {
 
     }
 
+    function hexToPixelHoriz(hex) {
+        let size = 60;
+        let x = size * (Math.sqrt(3) * hex.q + Math.sqrt(3) / 2 * hex.r);
+        let y = size * (3. / 2 * hex.r);
+        return new Point(x, y);
+    }
     function neighbour(center, direction) {
 
         let dir = hexDirection(direction);
@@ -125,7 +142,7 @@ function gameGrid() {
         return getHexRing(2);
     }
 
-    this.makeHexagonalShape = function (N, rows) {
+    this.makeHexagonalShape = function (N, rows, horizontal) {
         // console.log("make hexagonal called " + N);
         let results = [];
         for (let q = -N; q <= N; q++) {
@@ -138,42 +155,106 @@ function gameGrid() {
                 let axialQ = q + N;
                 let axialR = -q - r + N;
 
+
                 let hex2 = anyHex(axialQ, axialR);
 
                 coord = hexToPixel(hex2);
 
                 if (((Math.abs(q) + Math.abs(r) + Math.abs(-q - r)) / 2) <= N) {
                     results.push(hex);
-                    //results.push(hex2);
 
-                    //TODO make switch and use function to add player pucks
+
                     //REMINDER - changed  $("#grid div").first() to $("#grid")
 
                     $("#grid").prepend(`<div class='hex' style="top:${coord.x}px; left:${coord.y}px"  hex="${axialR} ${axialQ}">
                     ${axialR}xxxxxxxxx${axialQ}</div>`);
 
-                    if (axialQ == 0) {
-                        $("#grid").append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
-                    }
-                    else if ((axialQ == 1) && (rows == 2)) {
-                        $("#grid").append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
-                    }
 
-                    else if (axialQ == 2 * N) {
-                        $("#grid").append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
-                    }
 
-                    else if ((axialQ == 2 * N - 1) && (rows == 2)) {
-                        $("#grid").append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
-                    }
+                    if (!horizontal) {
 
+                        //TODO convert to function
+                        if (axialQ == 0) {
+                            $("#grid div").first().attr("player", "1");
+                            $("#grid").append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}" player="1" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+
+                        }
+                        else if ((axialQ == 1) && (rows >= 2)) {
+                            $("#grid div").first().attr("player", "1");
+                            $("#grid").append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}" player="1"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+
+                        }
+                        else if ((axialQ == 2) && (rows == 3)) {
+                            $("#grid div").first().attr("player", "1");
+                            $("#grid").append(`<div class='cylinder playerOne' axial="${axialR} ${axialQ}" player="1"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+
+                        }
+
+                        else if (axialQ == 2 * N) {
+                            $("#grid div").first().attr("player", "2");
+                            $("#grid").append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}" player="2"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+                        }
+
+                        else if ((axialQ == 2 * N - 1) && (rows >= 2)) {
+                            $("#grid div").first().attr("player", "2");
+                            $("#grid").append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}" player="2"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+                        }
+
+                        else if ((axialQ == 2 * N - 2) && (rows == 3)) {
+                            $("#grid div").first().attr("player", "2");
+                            $("#grid").append(`<div class='cylinder playerTwo' axial="${axialR} ${axialQ}" player="2"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+                        }
+                    }
 
                 }
 
                 else {
+                    // if put nonplayable hexes
                     //   $("#grid").append(`<div class='hex test' style="top:${coord.x}px; left:${coord.y}px">${axialR}xxxxxxxxx${axialQ}</div>`); 
                 }
             }
+        }
+        if (horizontal) {
+            // make rings here
+            let allRings = [];
+            for (i = 1; i <= rows; i++) {
+                allRings.push(getHexRing(anyHex(0, N), i));
+            }
+            allRings.push([anyHex(0, N)]);
+            allRings.forEach(function (el) {
+                el.forEach(function (hex) {
+
+                    if ($(`[hex='${hex.q} ${hex.s}']`).length) {
+
+                        coord.y = $(`[hex='${hex.q} ${hex.s}']`).css("left");
+                        coord.x = $(`[hex='${hex.q} ${hex.s}']`).css("top");
+
+                        $("#grid").append(`<div class='cylinder playerOne' axial="${hex.q} ${hex.s}" player="1" style="top:${coord.x}; left:${coord.y};"></div>`);
+                        $(`[hex='${hex.q} ${hex.s}']`).attr("player", "1");
+                    }
+                });
+            });
+
+            allRings = [];
+            for (i = 1; i <= rows; i++) {
+                allRings.push(getHexRing(anyHex(2 * N, N), i));
+            }
+            allRings.push([anyHex(2 * N, N)]);
+            allRings.forEach(function (el) {
+                el.forEach(function (hex) {
+                    // console.log(hex);
+                    if ($(`[hex='${hex.q} ${hex.s}']`).length) {
+
+                        coord.y = $(`[hex='${hex.q} ${hex.s}']`).css("left");
+                        coord.x = $(`[hex='${hex.q} ${hex.s}']`).css("top");
+
+                        $("#grid").append(`<div class='cylinder playerTwo' axial="${hex.q} ${hex.s}" player="2" style="top:${coord.x}; left:${coord.y};"></div>`);
+                        $(`[hex='${hex.q} ${hex.s}']`).attr("player", "2");
+                    }
+                });
+            });
+
+            // console.log(allRings);
         }
 
 
@@ -182,18 +263,23 @@ function gameGrid() {
             $(`[hex='${item.q} ${item.s}']`).addClass("allowMove");
 
         }
+
         $(".cylinder").click(function () {
+
 
             // TODO put this back
             // console.log($(this).attr("axial"));
-            let t = $(this).attr("axial").split(" ");
-            let currentHex = anyHex(t[0], t[1]);
+            $(".blink").removeClass("blink");
+            $(this).addClass("blink");
 
-            if (last && (last.attr("axial") != $(this).attr("axial"))) {
-                blinkingStop(last);
-            }
+            let t = $(this).attr("axial").split(" ");
+
+            // REMOVED - conflict with movement animation
+            // if (last && (last.attr("axial") != $(this).attr("axial"))) {
+            //     blinkingStop(last);
+            // }
             last = $(this);
-            blinking($(this));
+            // blinking($(this));
 
             let neighs = getHexRing(anyHex(t[0], t[1]), 1);
             $("div .allowMove").removeClass("allowMove");
@@ -211,23 +297,38 @@ function gameGrid() {
 
     $(document).on('click', ".allowMove", function moveOne() {
 
-        let t = $(this).attr("hex").split(" ");
+
+        //TODO z-idex depends on rows
+        let t = last.attr("axial").split(" ");
         let currentHex = anyHex(t[0], t[1]);
-        console.log(t[0], t[1], last.attr("axial"));
 
-         coordX = $(this).css("top");
-        coordY = $(this).css("left");
+        let coordX = $(this).css("top");
+        let coordY = $(this).css("left");
 
-               $(last).animate(
+        let lastUsehex = $(this).attr("hex");
+        let clickHex = $(this);
+        let lastPlayer = last.attr("player");
+
+
+        $(last).animate(
             {
                 top: `${coordX}`,
-                left: `${coordY}`
-            }, 200
+                left: `${coordY}`,
+
+            }, 200, function () {
+                last.attr("axial", lastUsehex);
+                clickHex.attr("palyer", lastPlayer);
+                $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
+            }
         );
-        last.attr("axial", $(this).attr("hex"));
 
     });
 
+
+    this.playerTurn = function (player) {
+        // console.log("aa");
+        $("h2 span").html(player);
+    }
 
 
 }; //END gameGrid
@@ -282,9 +383,6 @@ function blinkingStop(elm) {
 //     }, 1000/60);
 //   });
 
-// TODO Add 1 oor 2 rows of player puck
-//TODO add green pieces count for players
-
 
 
 $(document).ready(function () {
@@ -306,16 +404,22 @@ $("#generate").click(function () {
     let myGame = new Game();
 
     myGame.halfSize = parseInt($("#half_size").val());
-    myGame.nrOfPlayers = $("#players").val();
-    myGame.allowHorizontal = $("#allow_horizontal").val();
-    myGame.allowBackwards = $("#allow_backwards").val();
-    myGame.allowNoJumps = $("[name='allow_nojumps']").val();
-    myGame.nrOfRows = $("[name='nr_of_rows']").val();
+    myGame.nrOfPlayers = parseInt($("#players").val());
+    myGame.allowHorizontal = parseInt($("#allow_horizontal").val());
+    myGame.allowBackwards = parseInt($("#allow_backwards").val());
+    myGame.secondChance = parseInt($("#second_chance").val());
+    myGame.allowNoJumps = parseInt($("[name='allow_nojumps']:checked").val());
+    myGame.nrOfRows = parseInt($("[name='nr_of_rows']:checked").val());
+    myGame.horizontal = parseInt($("[name='horiz']:checked").val());
 
-
+    // console.log(parseInt($("[name='horiz']:checked").val()));
+    // console.log(parseInt($("[name='nr_of_rows']:checked").val()));
 
     myGame.startGame();
     // console.log("button: " + myGame.gameStart());
 
 });
 
+$("#end_turn").click(function () {
+console.log("end");
+});    
