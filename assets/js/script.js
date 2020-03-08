@@ -33,7 +33,7 @@ function gameGrid() {
     currentChance = myGame.secondChance;
     // console.log("grid start " + myGame.secondChance);
     // let currentChance = 99;
-    currentPlayer = myGame.playerTurn;
+    let currentPlayer = myGame.playerTurn;
 
     // console.log("grid chance " + currentChance + " grid player " + currentPlayer);
 
@@ -307,27 +307,25 @@ function gameGrid() {
                 last.attr("axial", lastUsehex);
                 clickHex.attr("player", lastPlayer);
                 $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
-
-                // console.log("animate chance " + currentChance);
-                if (currentChance === 1) {
-                    if (currentPlayer == 1) prepare(2); else prepare(1);
-                }
-                else {
-                    //TODO USE TEMPLATE LITERAL
-                    if (currentPlayer == 1) {
-
-                        $(".playerOne").unbind("click");
-
-                    } else {
-
-                        $(".playerTwo").unbind("click");
-
-                    }
-                }
             }
         );
 
+        // console.log("animate chance " + currentChance);
+        if (currentChance === 1) {
+            if (currentPlayer == 1) prepare(2); else prepare(1);
+        }
+        else {
+            //TODO USE TEMPLATE LITERAL
+            if (currentPlayer == 1) {
 
+                $(".playerOne").unbind("click");
+
+            } else {
+
+                $(".playerTwo").unbind("click");
+
+            }
+        }
     });
 
     function playerPiceSelect(el) {
@@ -349,9 +347,11 @@ function gameGrid() {
     }
 
     function prepare(player) {
-        // console.log("prepare");
+        //  console.log("prepare" + player);
+        // console.log("Being called from " + arguments.callee.caller.toString());
         $("h2 span").html(player + " ");
-        $("#player_turn").toggleClass("playerTwo");
+        //$("#player_turn").toggleClass("playerTwo");
+        if (player == 2) $("#player_turn").addClass("playerTwo"); else $("#player_turn").removeClass("playerTwo");
 
         $("div .allowMove").removeClass("allowMove");
         $(last).removeClass("blink");
@@ -473,7 +473,7 @@ $(document).ready(function () {
 // ADMIN
 $("#generate").click(function () {
     $("#grid").empty();
-
+    myGame = null;
     myGame = new Game();
 
     myGame.halfSize = parseInt($("#half_size").val());
