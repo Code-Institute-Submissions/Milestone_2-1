@@ -46,8 +46,8 @@
 
         <hr>
 
-        <label for="second_chance">Second Chance</label>
-        <input type="checkbox" name="second_chance" id="second_chance" value="1" checked>
+        <label for="second_chance">Second Chance (End Turn only with Button)</label>
+        <input type="checkbox" name="second_chance" id="second_chance" value="2" >
 
         <hr>
 
@@ -78,7 +78,8 @@
 
     </div>
 
-    <h2 id="player_turn">Player <span></span> Move</h2>
+    <h2 id="player_turn" class="playerOne playerTwo">Player <span class="playerNumber"></span>Move</h2>
+    <h2 id="move_info">Info here</h2>
     <div id="grid">
     </div>
     <script type="text/javascript" src="assets/js/script.js"></script>
