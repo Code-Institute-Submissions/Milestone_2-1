@@ -23,7 +23,7 @@ h2 {
     margin: 0;
 }
 
-hr {
+hr, div, body {
     padding: 0;
     margin: 0;
 }
@@ -37,8 +37,19 @@ hr {
 #grid {
     margin-top: 20px;
     position: relative;
+   
+    
 }
 
+.grid_bg {
+   
+    padding-top: 64px;
+    padding-bottom: 40px;
+    position: relative;
+    border-radius: 25%;
+    
+  
+}
 ol:nth-child(odd) {
     position: relative;
     left: 50px;
@@ -104,11 +115,14 @@ ol:nth-child(even) {
     cursor: pointer;
 }
 
-.hex.allowMove:hover {
-    background: rgba(203, 189, 255);
+.hex.allowMove:hover ui-droppable-hover {
+    background: rgb(203, 189, 255) ;
     cursor: pointer;
 }
 
+.ui-droppable-hover, hexHover {
+    background: rgb(203, 189, 255) !important;
+}
 .cylinder {
     position: absolute;
     overflow: hidden;
@@ -152,29 +166,20 @@ ol:nth-child(even) {
     content: '';
 }
 
-.playerOne {
+.player1 {
     background-color: rgba(255, 0, 0, .5);
 }
-
-.playerOne:after {
+.player1:after, .playerOneTransp {
     background-color: rgba(255, 64, 64, .5);
 }
 
-/* .playerOne:before {
-    background-color: rgba(107, 0, 0, .5);
-} */
-
-.playerTwo {
+.player2 {
     background-color: rgb(4, 0, 255);
 }
 
-.playerTwo:after {
+.player2:after, .playerTwoTransp {
     background-color: rgb(83, 80, 255);
 }
-
-/* .playerTwo:before {
-    background-color: rgb(3, 0, 167);
-} */
 
 @keyframes blink {
     50% {
