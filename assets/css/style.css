@@ -193,9 +193,16 @@ ol:nth-child(even) {
     }
 }
 
+
+
 .blink {
     animation: blink .5s step-start 0s infinite;
     -webkit-animation: blink .5s step-start 0s infinite;
+}
+
+.short_blink {
+    animation: blink .5s step-start 0s 3;
+    -webkit-animation: blink .5s step-start 0s 3;
 }
 
 @keyframes drawArc {

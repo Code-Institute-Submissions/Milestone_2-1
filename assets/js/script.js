@@ -35,6 +35,9 @@ function gameGrid() {
     // console.log("grid start " + myGame.secondChance);
     // let currentChance = 99;
     let currentPlayer = myGame.playerTurn;
+    let newGame = true;
+    let showPossibleMoves = true;
+    let origAxial = '';
 
     // console.log("grid chance " + currentChance + " grid player " + currentPlayer);
 
@@ -142,13 +145,10 @@ function gameGrid() {
 
     function nextPlayer(player) {
         newPlayer = player == 1 ? 2 : 1;
-        console.log("player In " + player + "player Out" + newPlayer);
-
         return newPlayer;
     }
-    this.setPlayer = function(pl) {
+    this.setPlayer = function (pl) {
         currentPlayer = pl;
-        console.log(currentPlayer);
     }
 
     this.makeHexagonalShape = function (N, rows, horizontal) {
@@ -274,57 +274,81 @@ function gameGrid() {
 
 
 
-    
+
         return results;
     }
 
 
     function showMove(item) {
-console.log("showMove");
+        //console.log("showMove");
+
+
         $(`[hex='${item.q} ${item.s}']:not([player]`).addClass("allowMove");
         $(`[hex='${item.q} ${item.s}']:not([player]`).droppable({
             accept: '.blink',
 
             hoverClass: 'hexHover',
+            disabled: false,
             drop: function (event, ui) {
-                //     $(this).addClass('ui-state-highlight').find('p').html('Dropped!');
-                console.log("dropped");
+
+                // console.log("dropped");
+                // console.log(ui);
 
                 let dropHex = $(event.target);
+                // console.log($(last).attr("axial") + " vs " +dropHex.attr("hex"));
 
-                
-                //TODO z-idex depends on rows
+                if (dropHex.hasClass("allowMove")) {
+                    //TODO z-idex depends on rows
 
-                let t = last.attr("axial").split(" ");
-                
-                let coordX = dropHex.css("top");
-                let coordY = dropHex.css("left");
 
-                let lastPlayer = last.attr("player");
+                    let t = last.attr("axial").split(" ");
 
-                $(last).animate(
-                    
-                    {
-                        top: coordX,
-                        left: coordY,
+                    let coordX = dropHex.css("top");
+                    let coordY = dropHex.css("left");
 
-                    }, 100, function () {
-                        last.attr("axial", dropHex.attr("hex"));
-                        dropHex.attr("player", lastPlayer);
-                        $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");  //SHOULD BE DIFFERENT - will not work - to check
+                    let lastPlayer = last.attr("player");
+
+                    $(last).animate(
+
+                        {
+                            top: coordX,
+                            left: coordY,
+
+                        }, 100, function () {
+
+                            last.attr("axial", dropHex.attr("hex"));
+                            dropHex.attr("player", lastPlayer);
+
+                            $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
+
+                        }
+
+                    );
+
+                    if (currentChance === 1) {
+                        currentPlayer = nextPlayer(currentPlayer);
+                        prepare(`${currentPlayer}`);
                     }
-                    
-                );
+                    else {
+                        $(`.player${currentPlayer}`).unbind("click");
+                        $(`.player${currentPlayer}`).not($(last)).draggable('disable');
 
-               
-                if (currentChance === 1) {
-                    currentPlayer = nextPlayer(currentPlayer);
-                    prepare(`${currentPlayer}`);
-                }
-                else {
-                    $(`.player${currentPlayer}`).unbind("click");
-                }
+
+                        showPossibleMoves = false;
+
+
+
+
+                    }
+
+                } 
+
+
+
+
             }
+
+
         });
 
     }
@@ -332,7 +356,7 @@ console.log("showMove");
 
     $(document).on('click', ".allowMove", function moveOne() {
 
-console.log("Allow move");
+        console.log("Allow move");
         //TODO z-idex depends on rows
         let t = last.attr("axial").split(" ");
         let currentHex = anyHex(t[0], t[1]);
@@ -342,6 +366,7 @@ console.log("Allow move");
 
         let lastUsehex = $(this).attr("hex");
         let clickHex = $(this);
+
         let lastPlayer = last.attr("player");
 
 
@@ -354,13 +379,14 @@ console.log("Allow move");
                 last.attr("axial", lastUsehex);
                 clickHex.attr("player", lastPlayer);
                 $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
+
             }
         );
 
-        
+
         //  console.log("animate chance " + currentChance);
         if (currentChance == 1) {
-            currentPlayer= nextPlayer(currentPlayer);
+            currentPlayer = nextPlayer(currentPlayer);
             prepare(`${currentPlayer}`);
         }
         else {
@@ -369,7 +395,12 @@ console.log("Allow move");
     });
 
     function playerPiceSelect(el) {
+
+        setHelperText(2);
+
         $(".blink").removeClass("blink");
+        $($(el)).removeClass("short_blink");
+
         $(el).not(".grid_bg").addClass("blink");
 
         let t = $(el).attr("axial").split(" ");
@@ -381,47 +412,89 @@ console.log("Allow move");
         last = $(el);
         // blinking($(this));
 
-        let neighs = getHexRing(anyHex(t[0], t[1]), 1);
-        $("div .allowMove").removeClass("allowMove");
-        neighs.forEach(showMove);
+        // console.log("select " + t[0] + " " + t[1]);
+
+        if (showPossibleMoves == true) {
+            let neighs = getHexRing(anyHex(t[0], t[1]), 1);
+            $("div .allowMove").removeClass("allowMove");
+            neighs.forEach(showMove);
+        }
+
+        if (origAxial.length === 0) {
+            origAxial = `${t[0]} ${t[1]}`;
+        $(`[hex='${t[0]} ${t[1]}']`).droppable({ disabled: true });
+        // console.log("mark disable " + t[0] + " " + t[1]);
+    } else {
+        
+    }
+
     }
 
     function prepare(player) {
-          console.log("prepare " + player);
+        
+        setHelperText(1);
+        showPossibleMoves = true;
+
+        console.log("prepare " + player);
         // console.log("Being called from " + arguments.callee.caller.toString());
         $("h2 span").html(player + " ");
 
-        if (player == 2) $("#player_turn").addClass("playerTwoTransp"); else $("#player_turn").removeClass("playerTwoTransp");
-        if (player == 2) $(".grid_bg").addClass("playerTwoTransp"); else $(".grid_bg").removeClass("playerTwoTransp");
+        if (player == 2) {
+            $("#player_turn").addClass("playerTwoTransp");
+            $(".grid_bg").addClass("playerTwoTransp");
+
+            $(".player2").addClass("short_blink");
+            $(".player1").removeClass("short_blink");
+        }
+        else {
+            $("#player_turn").removeClass("playerTwoTransp");
+            $(".grid_bg").removeClass("playerTwoTransp");
+
+            $(".player1").addClass("short_blink");
+            $(".player2").removeClass("short_blink");
+        }
 
         $("div .allowMove").removeClass("allowMove");
         $(last).removeClass("blink");
 
 
         $(`.player${player}`).bind("click", function () { playerPiceSelect($(this)) });
-        
+
         $(`.player${player == 1 ? 2 : 1}`).unbind("click");
-       
-   
+
+
         $(`.player${player}`).draggable({
 
-
             start: (function (event, ui) {
-                playerPiceSelect($(this));
+                //console.log("start");
+                playerPiceSelect($(event.target));
+
             }),
 
             stop: (function (event, ui) {
-                console.log("stop");
+                // console.log("stop");
+
+            }),
+            drag: (function (event, ui) {
+                //console.log("drag");
+                setHelperText(3);
+
             }),
             revert: 'invalid',
             revertDuration: 200,
         });
 
-        $(`.player${player == 1 ? 2 : 1}`).draggable('disable'); 
-        $(`.player${player}`).draggable('enable'); 
+        if (newGame) {
+            newGame = false;
+        } else {
+            $(`.player${player == 1 ? 2 : 1}`).draggable('disable');
+            $(`.player${player}`).draggable('enable');
 
-       
-       
+           origAxial = '';
+        }
+
+
+
     }
 
     this.startPlayerTurn = function (player) {
@@ -503,27 +576,27 @@ function isDoubleClicked(element) {
 
 let myGame;
 
+// PAGE Load
 $(document).ready(function () {
     myGame = new Game();
     myGame.startGame();
     // console.log("doc ready: " + myGame.gameStart());
+    setHelperText(1);
 
     $("#end_turn").click(function () {
 
         //prevent accidentaly skipped turn
         if (isDoubleClicked($(this))) return;
 
-        // if (myGame.playerTurn == 1) {
-        //     myGame.playerTurn = 2;
-        // } else {
-        //     myGame.playerTurn = 1;
-        // }
+
         myGame.playerTurn = myGame.playerTurn == 1 ? 2 : 1;
-       
+
 
         myGame.Grid.startPlayerTurn(myGame.playerTurn);
         myGame.Grid.setPlayer(myGame.playerTurn);
         // console.log(myGame.Grid);
+
+
     });
 
 });
@@ -553,4 +626,28 @@ $("#generate").click(function () {
 
 
 });
+
+//Misc
+
+function setHelperText(textId) {
+    let helperText;
+    switch (textId) {
+        case 1:
+            helperText = "Click on game piece or start dragging";
+            break;
+        case 2:
+            helperText = "Click on a blue hexagon or drag to set destination";
+            break;
+        case 3:
+            helperText = "Drop on a blue hexagon to set destination";
+            break;
+        case 4:
+            helperText = "Click on a blue hexagon to set destination";
+            break;
+
+        default:
+            helperText = "Click on game piece or start dragging";
+    }
+    $("#move_info").text(helperText);
+}
 
