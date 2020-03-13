@@ -1,14 +1,14 @@
-function Game(halfSize = 3, nrOfPlayers = 2, allowJump = 1, allowHorizontal = 1, allowBackwards = 1, secondChance = 1, allowNoJumps = false, nrOfRows = 2, horizontal = 1) {
+function Game(halfSize = 3, nrOfPlayers = 2, allowJump = 2, allowHorizontal = 1, allowBackwards = 1, secondChance = 1, allowNoJumps = 1, nrOfRows = 2, horizontal = 1) {
 
-    this.nrOfPlayers = nrOfPlayers;
-    this.allowHorizontal = allowHorizontal; //1 true 2 false
-    this.allowBackwards = allowBackwards; //1 true 2 false
-    this.secondChance = secondChance; //1 true 2 false
-    this.allowNoJumps = allowNoJumps;
-    this.halfSize = halfSize;
-    this.nrOfRows = nrOfRows;
-    this.horizontal = horizontal; // 0 horizontal, 1 vertical
-    this.allowJump = allowJump; //1 true 2 false
+    this.nrOfPlayers = nrOfPlayers; // Play Vs computer - will NOT make this
+    this.allowHorizontal = allowHorizontal; //1 true 2 false // pieces can move sideways in vertical mode only
+    this.allowBackwards = allowBackwards; //1 true 2 false // pieces can move bacwards on grid
+    this.secondChance = secondChance; //1 true 2 false // moving piece ends turn OR turn only ends with button press
+    this.allowNoJumps = allowNoJumps; // 0 true 1 false // if a jump move is available, player has to take it
+    this.halfSize = halfSize; // radius of the grid
+    this.nrOfRows = nrOfRows; // how many rows of player pieces
+    this.horizontal = horizontal; // 0 horizontal, 1 vertical // player pieces placement on grid
+    this.allowJump = allowJump; //1 true 2 false // player can jump over theyir own pieces
 
     this.playerTurn = 1;
 
@@ -18,17 +18,27 @@ function Game(halfSize = 3, nrOfPlayers = 2, allowJump = 1, allowHorizontal = 1,
         this.Grid.startPlayerTurn(this.playerTurn);
         this.Grid.setAllowedMoves();
     }
+
+    this.showPlayerNr = function (nr) {
+        console.log(nr);
+    }
 };
 
-
+//game grid handles pieces moving on grid
+//has hexagons functions
 function gameGrid() {
 
     currentChance = myGame.secondChance;
-
-    // let currentChance = 99;
     let currentPlayer = myGame.playerTurn;
+
+    let playerPiecesNr = {
+        1: 0,
+        2: 0
+    }
+
     let newGame = true;
     let showPossibleMoves = true;
+    let freeMove = true; /// if not forced jump move or no jump detected
     let origAxial = '';
 
     function Hex(x, y, z) {
@@ -219,6 +229,66 @@ function gameGrid() {
         return results;
     }
 
+
+
+    function setAllowFreeMove() {
+        freeMove = true;
+        
+
+        testing = $(`.player${currentPlayer}`);
+
+        $(testing).each(function () {
+            t = $(this).attr("axial").split(" ");
+
+            for (let i = 0; i < 6; i++) {
+                neighPice = neighbour(anyHex(t[0], t[1]), i);
+
+               
+                if ($(`[player='${nextPlayer(currentPlayer)}'][axial='${neighPice.q} ${neighPice.s}']`).length) {
+                    neighSpace = neighbour(anyHex(neighPice.q, neighPice.s), i);
+                    console.log("neigh player" + neighPice.q + " " + neighPice.s);
+
+                    // console.log("testing piece " + t[0] + " " + t[1]);
+                    // console.log("aa " + neighPice.q + " " + neighPice.s);
+                    // console.log("neigh spce" + neighSpace.q + " " + neighSpace.s);
+                    //break;
+                   
+
+                    //  $()
+                    if ($(`[hex='${neighSpace.q} ${neighSpace.s}']:not([player]`).length) {
+                        // $(`[hex='${neighSpace.q} ${neighSpace.s}']:not([player]`).addClass("test");
+                        setHelperText(5);
+                        freeMove = false;
+
+                        return;
+
+                        // found = allowedNeigh.find(function (value, index, array) { //TODO fix this
+                        //     if (currentPlayer == 1) {
+                        //         dir = hexDirection(i);
+                        //     }
+                        //     else {
+                        //         dir = hexMultiply(hexDirection(i), -1);
+                        //     }
+                        //     ret = hexEquals(dir, value); //DUPLICATE functionality here
+                        //     return ret; //DUPLICATE functionality here
+                        // }); //DUPLICATE functionality here
+
+                        // if (typeof (found) === "undefined") {
+
+
+                        //     return;
+                        // }
+
+                    }
+
+                }
+            }
+
+        });
+    }
+
+
+
     function getJumps(center) {
         let results = [];
         let testing, ret;
@@ -226,7 +296,10 @@ function gameGrid() {
         for (let side = 0; side < 6; side++) { //direction 
 
             cube = neighbour(center, side);
-            if (myGame.allowJump == 2) testing = $(`[hex='${cube.q} ${cube.s}'][player]`); // allow self jump
+            if ((myGame.allowJump == 2)) {
+                    testing = $(`[hex='${cube.q} ${cube.s}'][player]`); // allow self jump ONLY if free move
+console.log("Free Move " + freeMove);
+            }
             else testing = $(`[hex='${cube.q} ${cube.s}'][player=${nextPlayer(currentPlayer)}]`); //jump over other player
             if (testing.length) {
                 newMove = hexAdd(cube, hexSubtract(cube, center));
@@ -290,32 +363,36 @@ function gameGrid() {
                         if (axialQ == 0) {
                             $("#grid div").first().attr("player", "1");
                             $("#grid").append(`<div class='cylinder player1' axial="${axialR} ${axialQ}" player="1" style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+                            playerPiecesNr[1]++;
 
                         }
                         else if ((axialQ == 1) && (rows >= 2)) {
                             $("#grid div").first().attr("player", "1");
                             $("#grid").append(`<div class='cylinder player1' axial="${axialR} ${axialQ}" player="1"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
-
+                            playerPiecesNr[1]++;
                         }
                         else if ((axialQ == 2) && (rows == 3)) {
                             $("#grid div").first().attr("player", "1");
                             $("#grid").append(`<div class='cylinder player1' axial="${axialR} ${axialQ}" player="1"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
-
+                            playerPiecesNr[1]++;
                         }
 
                         else if (axialQ == 2 * N) {
                             $("#grid div").first().attr("player", "2");
                             $("#grid").append(`<div class='cylinder player2' axial="${axialR} ${axialQ}" player="2"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+                            playerPiecesNr[2]++;
                         }
 
                         else if ((axialQ == 2 * N - 1) && (rows >= 2)) {
                             $("#grid div").first().attr("player", "2");
                             $("#grid").append(`<div class='cylinder player2' axial="${axialR} ${axialQ}" player="2"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+                            playerPiecesNr[2]++;
                         }
 
                         else if ((axialQ == 2 * N - 2) && (rows == 3)) {
                             $("#grid div").first().attr("player", "2");
                             $("#grid").append(`<div class='cylinder player2' axial="${axialR} ${axialQ}" player="2"  style="top:${coord.x}px; left:${coord.y}px;"></div>`);
+                            playerPiecesNr[2]++;
                         }
                     }
 
@@ -346,6 +423,7 @@ function gameGrid() {
 
                         $("#grid").append(`<div class='cylinder player1' axial="${hex.q} ${hex.s}" player="1" style="top:${coord.x}; left:${coord.y};"></div>`);
                         $(`[hex='${hex.q} ${hex.s}']`).attr("player", "1");
+                        playerPiecesNr[1]++;
                     }
                 });
             });
@@ -365,6 +443,7 @@ function gameGrid() {
 
                         $("#grid").append(`<div class='cylinder player2' axial="${hex.q} ${hex.s}" player="2" style="top:${coord.x}; left:${coord.y};"></div>`);
                         $(`[hex='${hex.q} ${hex.s}']`).attr("player", "2");
+                        playerPiecesNr[2]++;
                     }
                 });
             });
@@ -444,10 +523,11 @@ function gameGrid() {
         for (let i = 0; i < distance; i++) {
 
             testPos = hexAdd(testPos, dirHex);
-            console.log("testing " + testPos.q + " " + testPos.s);
             testing = $(`[axial='${testPos.q} ${testPos.s}'][player=${nextPlayer(currentPlayer)}]`); //jump over other player
             if (testing.length) {
                 removePlayerPiece(testing);
+                playerPiecesNr[currentPlayer]--;
+                myGame.showPlayerNr(playerPiecesNr);
             }
 
         }
@@ -455,7 +535,7 @@ function gameGrid() {
     }
 
     function removePlayerPiece(piece) {
-         $(piece).addClass("scale animate");
+        $(piece).addClass("scale animate");
         setTimeout(function () { $(piece).remove(); }, 1200);
     }
 
@@ -478,16 +558,16 @@ function gameGrid() {
         }
 
 
+        last.attr("axial", lastUsehex);
+        clickHex.attr("player", lastPlayer);
+        $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
+
 
         $(last).animate(
             {
                 top: `${coordX}`,
                 left: `${coordY}`,
-            }, 200, function () {
-                last.attr("axial", lastUsehex);
-                clickHex.attr("player", lastPlayer);
-                $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
-            }
+            }, 200
         );
 
         if (currentChance == 1) {
@@ -521,7 +601,7 @@ function gameGrid() {
             let neighs = getHexRing(anyHex(t[0], t[1]), 1);
             $("div .allowMove").removeClass("allowMove");
             // neighs.forEach(showMove);
-            neighs.forEach(element => showMove(element, false));
+           if (freeMove) neighs.forEach(element => showMove(element, false));
 
             let jumps = getJumps(anyHex(t[0], t[1]));
             jumps.forEach(element => showMove(element, true));
@@ -539,7 +619,13 @@ function gameGrid() {
         setHelperText(1);
         showPossibleMoves = true;
 
-        // console.log("prepare " + player);
+        if (myGame.allowNoJumps == 1) { // player have to jump if possible dd
+
+
+            setAllowFreeMove();
+        }
+
+
         $("h2 span").html(player + " ");
 
         if (player == 2) {
@@ -694,6 +780,9 @@ function setHelperText(textId) {
             break;
         case 4:
             helperText = "Click on a blue hexagon to set destination";
+            break;
+        case 5:
+            helperText = "Jump Move detected: Click on game piece or start dragging";
             break;
 
         default:

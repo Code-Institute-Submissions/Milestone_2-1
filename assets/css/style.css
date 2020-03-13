@@ -181,6 +181,9 @@ ol:nth-child(even) {
     background-color: rgba(83, 80, 255, .5);
 }
 
+.test {
+    background-color: black;
+}
 @keyframes blink {
     50% {
         opacity: 0.75;
