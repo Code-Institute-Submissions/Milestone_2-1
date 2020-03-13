@@ -1,6 +1,5 @@
-function Game(halfSize = 3, nrOfPlayers = 2, allowJump = 2, allowHorizontal = 1, allowBackwards = 1, secondChance = 1, allowNoJumps = 1, nrOfRows = 2, horizontal = 1) {
+function Game(halfSize = 3, allowJump = 2, allowHorizontal = 1, allowBackwards = 1, secondChance = 1, allowNoJumps = 1, nrOfRows = 2, horizontal = 0) {
 
-    this.nrOfPlayers = nrOfPlayers; // Play Vs computer - will NOT make this
     this.allowHorizontal = allowHorizontal; //1 true 2 false // pieces can move sideways in vertical mode only
     this.allowBackwards = allowBackwards; //1 true 2 false // pieces can move bacwards on grid
     this.secondChance = secondChance; //1 true 2 false // moving piece ends turn OR turn only ends with button press
@@ -188,11 +187,9 @@ function gameGrid() {
         return;
     }
 
-
     function hexToPixel(hex) {
 
-        //TODO maybe dynamic size from css
-        let size = 60;
+        let size = .06 * vw;
         let x = size * (3. / 2 * hex.q);
         let y = size * (Math.sqrt(3) / 2 * hex.q + Math.sqrt(3) * hex.s);
         return new Point(x, y);
@@ -233,7 +230,7 @@ function gameGrid() {
 
     function setAllowFreeMove() {
         freeMove = true;
-        
+        $(`[hex]`).removeClass("test");
 
         testing = $(`.player${currentPlayer}`);
 
@@ -243,7 +240,7 @@ function gameGrid() {
             for (let i = 0; i < 6; i++) {
                 neighPice = neighbour(anyHex(t[0], t[1]), i);
 
-               
+
                 if ($(`[player='${nextPlayer(currentPlayer)}'][axial='${neighPice.q} ${neighPice.s}']`).length) {
                     neighSpace = neighbour(anyHex(neighPice.q, neighPice.s), i);
                     console.log("neigh player" + neighPice.q + " " + neighPice.s);
@@ -252,11 +249,11 @@ function gameGrid() {
                     // console.log("aa " + neighPice.q + " " + neighPice.s);
                     // console.log("neigh spce" + neighSpace.q + " " + neighSpace.s);
                     //break;
-                   
+
 
                     //  $()
                     if ($(`[hex='${neighSpace.q} ${neighSpace.s}']:not([player]`).length) {
-                        // $(`[hex='${neighSpace.q} ${neighSpace.s}']:not([player]`).addClass("test");
+                        $(`[hex='${neighSpace.q} ${neighSpace.s}']:not([player]`).addClass("test");
                         setHelperText(5);
                         freeMove = false;
 
@@ -297,8 +294,8 @@ function gameGrid() {
 
             cube = neighbour(center, side);
             if ((myGame.allowJump == 2)) {
-                    testing = $(`[hex='${cube.q} ${cube.s}'][player]`); // allow self jump ONLY if free move
-console.log("Free Move " + freeMove);
+                testing = $(`[hex='${cube.q} ${cube.s}'][player]`); // allow self jump ONLY if free move
+                console.log("Free Move " + freeMove);
             }
             else testing = $(`[hex='${cube.q} ${cube.s}'][player=${nextPlayer(currentPlayer)}]`); //jump over other player
             if (testing.length) {
@@ -333,7 +330,7 @@ console.log("Free Move " + freeMove);
 
     this.makeHexagonalShape = function (N, rows, horizontal) {
 
-        $(".grid_bg").css("width", `${290 * N + 100}px`).css("height", `${200 * N + 100}px`).css("margin-left", `${10 * N}px`);
+        $(".grid_bg").css("width", `${.28 * vw * N + 50}px`).css("height", `${.245 * vw * N + 10}px`).css("margin-left", `10px`);
         let results = [];
         for (let q = -N; q <= N; q++) {
 
@@ -346,7 +343,6 @@ console.log("Free Move " + freeMove);
 
 
                 let hex2 = anyHex(axialQ, axialR);
-
                 coord = hexToPixel(hex2);
 
                 if (((Math.abs(q) + Math.abs(r) + Math.abs(-q - r)) / 2) <= N) {
@@ -601,7 +597,7 @@ console.log("Free Move " + freeMove);
             let neighs = getHexRing(anyHex(t[0], t[1]), 1);
             $("div .allowMove").removeClass("allowMove");
             // neighs.forEach(showMove);
-           if (freeMove) neighs.forEach(element => showMove(element, false));
+            if (freeMove) neighs.forEach(element => showMove(element, false));
 
             let jumps = getJumps(anyHex(t[0], t[1]));
             jumps.forEach(element => showMove(element, true));
@@ -684,9 +680,9 @@ console.log("Free Move " + freeMove);
 }; //END gameGrid
 
 
-var timer;
-var last;
-
+let timer;
+let last;
+let vw = $(document).width();
 
 function blinking(elm) {
 
@@ -741,6 +737,48 @@ $(document).ready(function () {
         myGame.Grid.startPlayerTurn(myGame.playerTurn);
         myGame.Grid.setPlayer(myGame.playerTurn);
     });
+
+    function fixCSS(el) {
+        
+
+        var attr = $(this).attr('hex');
+        if (typeof attr !== typeof undefined && attr !== false) {
+            // Element has this attribute
+            t = $(this).attr("hex").split(" ");
+            let size = .06 * vw2;
+            let x = size * (Math.sqrt(3) * t[0] + Math.sqrt(3) / 2 * t[1]);
+            let y = size * (3. / 2 * t[1]);
+
+            $(this).css("left", x + "px");
+            $(this).css("top", y + "px");
+
+        }
+        else {
+            attr = $(this).attr('axial');
+            if (typeof attr !== typeof undefined && attr !== false) {
+                // Element has this attribute
+                t = $(this).attr("axial").split(" ");
+                let size = .06 * vw2;
+                let x = size * (Math.sqrt(3) * t[0] + Math.sqrt(3) / 2 * t[1]);
+                let y = size * (3. / 2 * t[1]);
+
+                $(this).css("left", x + "px");
+                $(this).css("top", y + "px");
+
+            }
+        } 
+
+    }
+
+    $(window).resize(function () {
+        vw2 = $(document).width();
+       
+        $('[hex]').each(fixCSS);
+        $('[axial]').each(fixCSS);
+
+        $(".grid_bg").css("width", `${.28 * vw2 * myGame.halfSize + 50}px`).css("height", `${.245 * vw2 * myGame.halfSize + 10}px`).css("margin-left", `10px`);
+
+    });
 });
 
 
@@ -751,7 +789,6 @@ $("#generate").click(function () {
     myGame = new Game();
 
     myGame.halfSize = parseInt($("#half_size").val());
-    myGame.nrOfPlayers = parseInt($("#players").val());
     myGame.allowHorizontal = $("#allow_horizontal:checked").val() ? parseInt($("#allow_horizontal:checked").val()) : 1;
     myGame.allowBackwards = $("#allow_backwards:checked").val() ? parseInt($("#allow_backwards:checked").val()) : 1;
     myGame.secondChance = $("#second_chance:checked").val() ? parseInt($("#second_chance:checked").val()) : 1;

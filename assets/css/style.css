@@ -1,5 +1,5 @@
 body {
-    /* font-size: 7em; */
+     font-size: 1vw; 
 }
 
 div {
@@ -37,72 +37,60 @@ hr, div, body {
 #grid {
     margin-top: 20px;
     position: relative;
-   
+   left: -4.9vw;
+   top: 4.9vw;
     
 }
 
 .grid_bg {
    
-    padding-top: 64px;
+    /* padding-top: 64px;
     padding-bottom: 40px;
-    position: relative;
+    position: relative; */
     border-radius: 25%;
     
   
 }
-ol:nth-child(odd) {
-    position: relative;
-    left: 50px;
-}
-
-ol:nth-child(even) {
-    position: relative;
-    margin-top: -50px;
-    margin-bottom: -50px;
-}
-
 /*  */
-
 /* TODO - fix size */
-
 /*   */
 
 .hex {
     position: absolute;
-    width: 100px;
-    height: 62.74px;
+    width: 9.8vw;
+    height: 5.774vw;
     background-color: #ffffff;
-    margin: 28.87px 0;
+    margin: 2.887vw 0;
     border-left: solid 2px #333333;
     border-right: solid 2px #333333;
     display: block;
     text-align: center;
-    line-height: 60px;
+    line-height: 6vw;
 }
 
 .hex:before, .hex:after {
     content: "";
     position: absolute;
     z-index: 1;
-    width: 69.71px;
-    height: 69.71px;
+    width: 6.971vw;
+    height: 6.971vw;
     -webkit-transform: scaleY(0.5774) rotate(-45deg);
     -ms-transform: scaleY(0.5774) rotate(-45deg);
     transform: scaleY(0.5774) rotate(-45deg);
     background-color: inherit;
-    left: 13.6447px;
+    left: 1.36447vw;
 }
 
 .hex:before {
-    top: -35.3553px;
-    border-top: solid 2.8284px #333333;
-    border-right: solid 2.8284px #333333;
+    top: -3.5355vw;
+    border-top: solid 2px #333333;
+    border-right: solid 2px #333333;
 }
 
 .hex:after {
-    bottom: -35.3553px;
-    border-bottom: solid 2.8284px #333333;
-    border-left: solid 2.8284px #333333;
+    bottom: -3.5355vw;
+    border-bottom: solid 2px #333333;
+    border-left: solid 2px #333333;
 }
 
 .hex:hover {
@@ -127,12 +115,11 @@ ol:nth-child(even) {
     position: absolute;
     overflow: hidden;
     cursor: pointer;
-    /* margin: -69px auto 0 5px; */
-    margin-top: 23px;
-    margin-left: 6px;
-    width: 90px;
-    height: 75px;
-    border-radius: 45px/25px;
+    margin-top: 2.5vw;
+    margin-left: 0.6vw;
+    width: 9vw;
+    height: 6.5vw;
+    border-radius: 4.5vw/2.25vw;
     /* background-color: rgba(160, 160, 160, 1); */
     z-index: 99;
     -webkit-box-shadow: 18px -15px 12px -10px rgba(0, 0, 0, 1);
@@ -140,29 +127,25 @@ ol:nth-child(even) {
     box-shadow: 18px -15px 12px -10px rgba(0, 0, 0, 1);
 }
 
-.cylinder:after {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 90px;
-    height: 50px;
-    border-radius: 45px/25px;
-    /* background-color: rgb(196, 196, 196); */
-    content: '';
-    /* use this when green
-    -webkit-box-shadow: inset 0px 0px 10px 4px rgba(0,0,0,1);
-    -moz-box-shadow: inset 0px 0px 10px 4px rgba(0,0,0,1);
-    box-shadow: inset 0px 0px 10px 4px rgba(0,0,0,1); */
-}
-
 .cylinder:before {
     position: absolute;
     left: 0;
-    bottom: 0;
-    width: 90px;
-    height: 50px;
-    border-radius: 45px/25px;
+    top: calc(50% + .2vh);
+    width: 9vw;
+    height: 6.5vw;
+    border-radius: 4.5vw/2.25vw;
     /* background-color: rgba(160, 160, 160, 1); */
+    content: '';
+}
+
+.cylinder:after {
+    position: absolute;
+    left: 0;
+    bottom: calc(50% - .2vh);
+    width: 9vw;
+    height: 5vw;
+    border-radius: 4.5vw/2.25vw;
+    background-color: rgba(160, 160, 160, 1);
     content: '';
 }
 
