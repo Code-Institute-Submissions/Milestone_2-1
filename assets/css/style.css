@@ -115,7 +115,7 @@ ol:nth-child(even) {
     cursor: pointer;
 }
 
-.hex.allowMove:hover ui-droppable-hover {
+.hex.allowMove:hover  {
     background: rgb(203, 189, 255) ;
     cursor: pointer;
 }
@@ -174,11 +174,11 @@ ol:nth-child(even) {
 }
 
 .player2 {
-    background-color: rgb(4, 0, 255);
+    background-color: rgba(4, 0, 255, .5);
 }
 
 .player2:after, .playerTwoTransp {
-    background-color: rgb(83, 80, 255);
+    background-color: rgba(83, 80, 255, .5);
 }
 
 @keyframes blink {
@@ -204,6 +204,16 @@ ol:nth-child(even) {
     animation: blink .5s step-start 0s 3;
     -webkit-animation: blink .5s step-start 0s 3;
 }
+
+
+.scale {
+    transform: scale(1);
+    transition: all 1s;
+  }
+  
+  .scale.animate {
+    transform: scale(0.5);
+  }
 
 @keyframes drawArc {
     0% {

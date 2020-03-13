@@ -1,14 +1,14 @@
-function Game(halfSize = 3, nrOfPlayers = 2, allowJump = 2, allowHorizontal = 1, allowBackwards = 1, secondChance = 1, allowNoJumps = false, nrOfRows = 2, horizontal = 0) {
+function Game(halfSize = 3, nrOfPlayers = 2, allowJump = 1, allowHorizontal = 1, allowBackwards = 1, secondChance = 1, allowNoJumps = false, nrOfRows = 2, horizontal = 1) {
 
     this.nrOfPlayers = nrOfPlayers;
-    this.allowHorizontal = allowHorizontal;
-    this.allowBackwards = allowBackwards;
-    this.secondChance = secondChance;
+    this.allowHorizontal = allowHorizontal; //1 true 2 false
+    this.allowBackwards = allowBackwards; //1 true 2 false
+    this.secondChance = secondChance; //1 true 2 false
     this.allowNoJumps = allowNoJumps;
     this.halfSize = halfSize;
     this.nrOfRows = nrOfRows;
-    this.horizontal = horizontal;
-    this.allowJump = allowJump;
+    this.horizontal = horizontal; // 0 horizontal, 1 vertical
+    this.allowJump = allowJump; //1 true 2 false
 
     this.playerTurn = 1;
 
@@ -16,14 +16,8 @@ function Game(halfSize = 3, nrOfPlayers = 2, allowJump = 2, allowHorizontal = 1,
         this.Grid = new gameGrid();
         this.Grid.makeHexagonalShape(this.halfSize, this.nrOfRows, this.horizontal);
         this.Grid.startPlayerTurn(this.playerTurn);
-
+        this.Grid.setAllowedMoves();
     }
-
-
-    // this.gameStart = function () {
-    //     makeHexagonalShape(this.halfSize, this.nrOfRows);
-    // };
-
 };
 
 
@@ -36,8 +30,6 @@ function gameGrid() {
     let newGame = true;
     let showPossibleMoves = true;
     let origAxial = '';
-
-
 
     function Hex(x, y, z) {
         this.q = x;
@@ -57,7 +49,6 @@ function gameGrid() {
 
         if (typeof (z) == "number") {
             return new Hex(this.q, this.r, this.s);
-
         }
         else {
             return new Hex(this.q, -this.q - this.r, this.r);
@@ -71,11 +62,13 @@ function gameGrid() {
         return hexDirections[direction];
     }
 
+    const hexDiagonals = [anyHex(2, -1, -1), anyHex(1, -2, 1), anyHex(-1, -1, 2), anyHex(-2, 1, 1), anyHex(-1, 2, -1), anyHex(1, 1, -2)];
 
     let allowedNeigh = [anyHex(1, 0, -1), anyHex(1, -1, 0), anyHex(0, -1, 1),
     anyHex(-1, 0, 1), anyHex(-1, 1, 0), anyHex(0, 1, -1)];
 
     function setAllowedNeigh(playerNr) {
+
         let removeNeigh = [];
 
         if (myGame.horizontal == 1) { // Horizontal Align   - does NOT have SIDE movement
@@ -97,7 +90,6 @@ function gameGrid() {
                     // not allowed 0 -1, 1 -1
                     // allowed -1 1, 0 1
                     removeNeigh = [anyHex(-1, 1), anyHex(0, 1)];
-
                 } else {
                     removeNeigh = [anyHex(0, -1), anyHex(1, -1)];
                 }
@@ -105,14 +97,7 @@ function gameGrid() {
             if (myGame.allowHorizontal == 1) {  // No sideways movement  
                 removeNeigh.push(anyHex(-1, 0), anyHex(1, 0));
             }
-
-
-
         }
-        // if ((myGame.allowHorizontal == 1) && (myGame.horizontal == false)) {
-
-        // }
-
         // allowedNeigh = allowedNeigh.filter((item) => !removeNeigh.includes(item));
 
         for (var i = allowedNeigh.length - 1; i >= 0; i--) {
@@ -127,7 +112,10 @@ function gameGrid() {
         return allowedNeigh;
 
     }
-    setAllowedNeigh(currentPlayer);
+
+    this.setAllowedMoves = function () {
+        setAllowedNeigh(currentPlayer);
+    }
 
     function isRestrictedMove(hex) {
         ret = false;
@@ -135,18 +123,16 @@ function gameGrid() {
         selectedAxial = anyHex(parseInt(t[0]), parseInt(t[1]));
 
         if (currentPlayer == 1) {
-            dir = hexSubtract(selectedAxial, hex); /// only for forward
+            dir = hexSubtract(selectedAxial, hex);
         }
         else {
-            dir = hexSubtract(hex, selectedAxial); /// only for forward
+            dir = hexSubtract(hex, selectedAxial);
         }
-
 
         found = allowedNeigh.find(function (value, index, array) {
 
             ret = hexEquals(dir, value);
             return ret;
-
         });
 
         if (typeof (found) === "undefined") {
@@ -161,7 +147,6 @@ function gameGrid() {
         let q = parseInt(a.q) + parseInt(b.q);
         let r = parseInt(a.r) + parseInt(b.r);
         let s = parseInt(a.s) + parseInt(b.s);
-
         return anyHex(q, r, s);
     }
 
@@ -169,7 +154,6 @@ function gameGrid() {
         let q = parseInt(a.q) - parseInt(b.q);
         let r = parseInt(a.r) - parseInt(b.r);
         let s = parseInt(a.s) - parseInt(b.s);
-
         return anyHex(q, r, s);
     }
 
@@ -177,12 +161,10 @@ function gameGrid() {
         let q = parseInt(a.q) * k;
         let r = parseInt(a.r) * k;
         let s = parseInt(a.s) * k;
-
         return anyHex(q, r, s);
     }
 
     function hexEquals(a, b) {
-
         let result = false;
         result = (Boolean(parseInt(a.q) === parseInt(b.q)) && Boolean(parseInt(a.r) === parseInt(b.r)) && Boolean(parseInt(a.s) === parseInt(b.s)));
         return result;
@@ -190,16 +172,12 @@ function gameGrid() {
 
     function hexFind(el, index, arr) {
         let f = 0;
-
         if (hexEquals(el, hex)) {
-
             f++;
-
         }
-
         return;
     }
-  
+
 
     function hexToPixel(hex) {
 
@@ -207,9 +185,7 @@ function gameGrid() {
         let size = 60;
         let x = size * (3. / 2 * hex.q);
         let y = size * (Math.sqrt(3) / 2 * hex.q + Math.sqrt(3) * hex.s);
-
         return new Point(x, y);
-
     }
 
     function hexToPixelHoriz(hex) {
@@ -218,29 +194,57 @@ function gameGrid() {
         let y = size * (3. / 2 * hex.r);
         return new Point(x, y);
     }
-    function neighbour(center, direction) {
 
+    function neighbour(center, direction) {
         let dir = hexDirection(direction);
         let result = hexAdd(center, dir);
-
         return result;
     }
 
-
-
-
+    function getDistance(a, b) {
+        return Math.max(Math.abs(parseInt(a.q) - parseInt(b.q)), Math.abs(parseInt(a.r) - parseInt(b.r)), Math.abs(parseInt(a.s) - parseInt(b.s)));
+    }
 
     function getHexRing(center, radius) {
         let results = [];
 
-        let cube = hexAdd(center, hexMultiply(hexDirection(4), radius));
+        let cube = hexAdd(center, hexMultiply(hexDirection(4), radius)); // start on one side than go round
 
-         for (let side = 0; side < 6; side++) {
+        for (let side = 0; side < 6; side++) { //direction 
             for (let step = 0; step < radius; step++) {
-
-
                 results.push(cube);
                 cube = neighbour(cube, side);
+            }
+        }
+        return results;
+    }
+
+    function getJumps(center) {
+        let results = [];
+        let testing, ret;
+
+        for (let side = 0; side < 6; side++) { //direction 
+
+            cube = neighbour(center, side);
+            if (myGame.allowJump == 2) testing = $(`[hex='${cube.q} ${cube.s}'][player]`); // allow self jump
+            else testing = $(`[hex='${cube.q} ${cube.s}'][player=${nextPlayer(currentPlayer)}]`); //jump over other player
+            if (testing.length) {
+                newMove = hexAdd(cube, hexSubtract(cube, center));
+
+                found = allowedNeigh.find(function (value, index, array) { //TODO fix this
+                    if (currentPlayer == 1) {
+                        dir = hexSubtract(cube, center);
+                    }
+                    else {
+                        dir = hexSubtract(center, cube);
+                    }
+                    ret = hexEquals(dir, value); //DUPLICATE functionality here
+                    return ret; //DUPLICATE functionality here
+                }); //DUPLICATE functionality here
+
+                if (typeof (found) === "undefined") {
+                    results.push(newMove);
+                }
             }
         }
         return results;
@@ -256,13 +260,11 @@ function gameGrid() {
 
     this.makeHexagonalShape = function (N, rows, horizontal) {
 
-
-
         $(".grid_bg").css("width", `${290 * N + 100}px`).css("height", `${200 * N + 100}px`).css("margin-left", `${10 * N}px`);
         let results = [];
         for (let q = -N; q <= N; q++) {
 
-               for (let r = N; r >= -N; r--) {
+            for (let r = N; r >= -N; r--) {
 
                 let hex = anyHex(q + N, r + N, -q - r + N);
 
@@ -277,13 +279,10 @@ function gameGrid() {
                 if (((Math.abs(q) + Math.abs(r) + Math.abs(-q - r)) / 2) <= N) {
                     results.push(hex);
 
-
                     //REMINDER - changed  $("#grid div").first() to $("#grid")
 
                     $("#grid").prepend(`<div class='hex' style="top:${coord.x}px; left:${coord.y}px"  hex="${axialR} ${axialQ}">
                     ${axialR}xxxxxxxxx${axialQ}</div>`);
-
-
 
                     if (!horizontal) {
 
@@ -358,7 +357,7 @@ function gameGrid() {
             allRings.push([anyHex(2 * N, N)]);
             allRings.forEach(function (el) {
                 el.forEach(function (hex) {
- 
+
                     if ($(`[hex='${hex.q} ${hex.s}']`).length) {
 
                         coord.y = $(`[hex='${hex.q} ${hex.s}']`).css("left");
@@ -369,24 +368,17 @@ function gameGrid() {
                     }
                 });
             });
-
- 
         }
-
-
-
-
         return results;
     }
 
+    function showMove(item, jump) {
+        // console.log(jump);
 
-    function showMove(item) {
-        //console.log("showMove");
-        if (isRestrictedMove(anyHex(parseInt(`${item.q}`), parseInt(`${item.s}`)))) return;
-        console.log(isRestrictedMove(anyHex(parseInt(`${item.q}`), parseInt(`${item.s}`))));
-        // if (!isRestrictedMove(anyHex(parseInt(`${item.q}`), parseInt(`${item.s}`)))) console.log(`${item.q}, ${item.s}`);
+        if ((isRestrictedMove(anyHex(parseInt(`${item.q}`), parseInt(`${item.s}`)))) && (jump == false)) return;
 
-        $(`[hex='${item.q} ${item.s}']:not([player]`).addClass("allowMove");
+        if (jump) $(`[hex='${item.q} ${item.s}']:not([player]`).addClass("allowMove allowJump");
+        else $(`[hex='${item.q} ${item.s}']:not([player]`).addClass("allowMove");
         $(`[hex='${item.q} ${item.s}']:not([player]`).droppable({
             accept: '.blink',
 
@@ -395,7 +387,7 @@ function gameGrid() {
             drop: function (event, ui) {
 
                 let dropHex = $(event.target);
-  
+
                 if (dropHex.hasClass("allowMove")) {
                     //TODO z-idex depends on rows
 
@@ -407,20 +399,15 @@ function gameGrid() {
                     let lastPlayer = last.attr("player");
 
                     $(last).animate(
-
                         {
                             top: coordX,
                             left: coordY,
-
                         }, 100, function () {
-
                             last.attr("axial", dropHex.attr("hex"));
                             dropHex.attr("player", lastPlayer);
 
                             $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
-
                         }
-
                     );
 
                     if (currentChance === 1) {
@@ -431,17 +418,46 @@ function gameGrid() {
                         $(`.player${currentPlayer}`).unbind("click");
                         $(`.player${currentPlayer}`).not($(last)).draggable('disable');
 
-
                         showPossibleMoves = false;
                     }
-
                 }
             }
-
         });
+    }
+
+    function jumpOne(hex) {
+
+        // use direction and distance
+        // than add direction  and test
+        //difference player - destination -  will make direction/
+
+        gridPos = $(hex).attr("hex").split(" ");
+        playerPos = $(last).attr("axial").split(" ");
+
+        let dirHex = hexSubtract(anyHex(gridPos[0], gridPos[1]), anyHex(playerPos[0], playerPos[1]));
+
+        dirHex = anyHex(Math.sign(dirHex.q), Math.sign(dirHex.s));
+        distance = getDistance(anyHex(gridPos[0], gridPos[1]), anyHex(playerPos[0], playerPos[1]));
+
+        let testPos = anyHex(playerPos[0], playerPos[1]);
+
+        for (let i = 0; i < distance; i++) {
+
+            testPos = hexAdd(testPos, dirHex);
+            console.log("testing " + testPos.q + " " + testPos.s);
+            testing = $(`[axial='${testPos.q} ${testPos.s}'][player=${nextPlayer(currentPlayer)}]`); //jump over other player
+            if (testing.length) {
+                removePlayerPiece(testing);
+            }
+
+        }
 
     }
 
+    function removePlayerPiece(piece) {
+         $(piece).addClass("scale animate");
+        setTimeout(function () { $(piece).remove(); }, 1200);
+    }
 
     $(document).on('click', ".allowMove", function moveOne() {
 
@@ -457,22 +473,24 @@ function gameGrid() {
 
         let lastPlayer = last.attr("player");
 
+        if ($(this).hasClass("allowJump")) {
+            jumpOne($(this));
+        }
+
+
 
         $(last).animate(
             {
                 top: `${coordX}`,
                 left: `${coordY}`,
-
             }, 200, function () {
                 last.attr("axial", lastUsehex);
                 clickHex.attr("player", lastPlayer);
                 $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
-
             }
         );
 
-
-         if (currentChance == 1) {
+        if (currentChance == 1) {
             currentPlayer = nextPlayer(currentPlayer);
             prepare(`${currentPlayer}`);
         }
@@ -496,23 +514,24 @@ function gameGrid() {
         // if (last && (last.attr("axial") != $(this).attr("axial"))) {
         //     blinkingStop(last);
         // }
-        last = $(el);
         // blinking($(this));
+        last = $(el);
 
-  
         if (showPossibleMoves == true) {
             let neighs = getHexRing(anyHex(t[0], t[1]), 1);
             $("div .allowMove").removeClass("allowMove");
-            neighs.forEach(showMove);
-         }
+            // neighs.forEach(showMove);
+            neighs.forEach(element => showMove(element, false));
+
+            let jumps = getJumps(anyHex(t[0], t[1]));
+            jumps.forEach(element => showMove(element, true));
+        }
 
         if (origAxial.length === 0) {
             origAxial = `${t[0]} ${t[1]}`;
             $(`[hex='${t[0]} ${t[1]}']`).droppable({ disabled: true });
-             } else {
-
+        } else {
         }
-
     }
 
     function prepare(player) {
@@ -520,8 +539,8 @@ function gameGrid() {
         setHelperText(1);
         showPossibleMoves = true;
 
-        console.log("prepare " + player);
-             $("h2 span").html(player + " ");
+        // console.log("prepare " + player);
+        $("h2 span").html(player + " ");
 
         if (player == 2) {
             $("#player_turn").addClass("playerTwoTransp");
@@ -541,28 +560,23 @@ function gameGrid() {
         $("div .allowMove").removeClass("allowMove");
         $(last).removeClass("blink");
 
-
         $(`.player${player}`).bind("click", function () { playerPiceSelect($(this)) });
 
         $(`.player${player == 1 ? 2 : 1}`).unbind("click");
 
 
         $(`.player${player}`).draggable({
-
             start: (function (event, ui) {
                 //console.log("start");
                 playerPiceSelect($(event.target));
-
             }),
 
             stop: (function (event, ui) {
                 // console.log("stop");
-
             }),
             drag: (function (event, ui) {
                 //console.log("drag");
                 setHelperText(3);
-
             }),
             revert: 'invalid',
             revertDuration: 200,
@@ -576,21 +590,12 @@ function gameGrid() {
 
             origAxial = '';
         }
-
-
-
     }
 
     this.startPlayerTurn = function (player) {
-
         prepare(player);
     }
-
-
 }; //END gameGrid
-
-
-
 
 
 var timer;
@@ -617,30 +622,6 @@ function blinkingStop(elm) {
 
 
 }
-
-
-// ///try to change css on the fly
-// var setRotation = function($target, degrees) {
-//     $target.css("-webkit-transform", "rotate(" + degrees + "deg)"); /* Safari and Chrome */
-//     $target.css("-moz-transform", "rotate(" + degrees + "deg)"); /* Firefox */
-//     $target.css("-ms-transform", "rotate(" + degrees + "deg)"); /* IE 9 */
-//     $target.css("-o-transform", "rotate(" + degrees + "deg)"); /* Opera */
-//     $target.css("transform", "rotate(" + degrees + "deg)"); 
-//   };
-
-//   var rotation = 0;
-
-//   //Set css() of elements
-//   $( document ).ready(function(){
-//     setInterval(function() {
-//       rotation += 0.1;
-//       setRotation($(".rotation"), rotation); 
-//     }, 1000/60);
-//   });
-
-
-
-
 
 
 function isDoubleClicked(element) {
@@ -670,19 +651,11 @@ $(document).ready(function () {
 
         //prevent accidentaly skipped turn
         if (isDoubleClicked($(this))) return;
-
-
         myGame.playerTurn = myGame.playerTurn == 1 ? 2 : 1;
-
-
         myGame.Grid.startPlayerTurn(myGame.playerTurn);
         myGame.Grid.setPlayer(myGame.playerTurn);
- 
     });
-
 });
-
-
 
 
 // ADMIN
@@ -702,7 +675,6 @@ $("#generate").click(function () {
     myGame.allowJump = $("#allow_jump:checked").val() ? parseInt($("#allow_jump:checked").val()) : 1;
 
     myGame.startGame();
-
 
 });
 
