@@ -1,5 +1,7 @@
 body {
     font-size: 14px;
+    min-width: 400px;
+    min-height: 400px;
 }
 
 div {
@@ -32,7 +34,7 @@ hr, div, body {
     font-size: 50px;
 }
 
-/* ----------------------------------------- */
+/* ------------------LANDSCAPE ----------------------- */
 
 @media (orientation: landscape) {
     #grid {
@@ -77,6 +79,8 @@ hr, div, body {
         border-radius: 4.5vh/2.25vh;
     }
 }
+
+/* --------------------PORTRAIT-------------- */
 
 @media (orientation: portrait) {
     #grid {
@@ -215,6 +219,18 @@ hr, div, body {
 
 .player2:after, .playerTwoTransp {
     background-color: rgba(83, 80, 255, .5);
+}
+
+/* ---------------- Dialog styles  */
+
+#rules-btn, #options-btn {
+    position: relative;
+    float: left;
+    margin: 18px;
+}
+
+#options-btn {
+    float: right;
 }
 
 .test {
