@@ -1,12 +1,14 @@
-function Game(halfSize = 3, allowJump = 2, allowHorizontal = 1, allowBackwards = 1, secondChance = 1, allowNoJumps = 1, nrOfRows = 2, horizontal = 0) {
+function Game(halfSize = 3, allowJump = 2, allowHorizontal = 2, allowBackwards = 2, secondChance = 1, allowNoJumps = 0, nrOfRows = 2, horizontal = 0) {
 
-    this.allowHorizontal = allowHorizontal; //1 true 2 false // pieces can move sideways in vertical mode only
+
+    this.halfSize = halfSize; // radius of the grid
+    this.horizontal = horizontal; // 0 horizontal, 1 vertical // player pieces placement on grid
+
     this.allowBackwards = allowBackwards; //1 true 2 false // pieces can move bacwards on grid
     this.secondChance = secondChance; //1 true 2 false // moving piece ends turn OR turn only ends with button press
     this.allowNoJumps = allowNoJumps; // 0 true 1 false // if a jump move is available, player has to take it
-    this.halfSize = halfSize; // radius of the grid
+    this.allowHorizontal = allowHorizontal; //1 true 2 false // pieces can move sideways in vertical mode only
     this.nrOfRows = nrOfRows; // how many rows of player pieces
-    this.horizontal = horizontal; // 0 horizontal, 1 vertical // player pieces placement on grid
     this.allowJump = allowJump; //1 true 2 false // player can jump over theyir own pieces
 
     this.playerTurn = 1;
@@ -240,67 +242,40 @@ function gameGrid() {
             for (let i = 0; i < 6; i++) {
                 neighPice = neighbour(anyHex(t[0], t[1]), i);
 
-
                 if ($(`[player='${nextPlayer(currentPlayer)}'][axial='${neighPice.q} ${neighPice.s}']`).length) {
                     neighSpace = neighbour(anyHex(neighPice.q, neighPice.s), i);
                     console.log("neigh player" + neighPice.q + " " + neighPice.s);
 
-                    // console.log("testing piece " + t[0] + " " + t[1]);
-                    // console.log("aa " + neighPice.q + " " + neighPice.s);
-                    // console.log("neigh spce" + neighSpace.q + " " + neighSpace.s);
-                    //break;
-
-
-                    //  $()
                     if ($(`[hex='${neighSpace.q} ${neighSpace.s}']:not([player]`).length) {
                         $(`[hex='${neighSpace.q} ${neighSpace.s}']:not([player]`).addClass("test");
                         setHelperText(5);
                         freeMove = false;
-
                         return;
-
-                        // found = allowedNeigh.find(function (value, index, array) { //TODO fix this
-                        //     if (currentPlayer == 1) {
-                        //         dir = hexDirection(i);
-                        //     }
-                        //     else {
-                        //         dir = hexMultiply(hexDirection(i), -1);
-                        //     }
-                        //     ret = hexEquals(dir, value); //DUPLICATE functionality here
-                        //     return ret; //DUPLICATE functionality here
-                        // }); //DUPLICATE functionality here
-
-                        // if (typeof (found) === "undefined") {
-
-
-                        //     return;
-                        // }
-
                     }
-
                 }
             }
-
         });
     }
 
 
 
     function getJumps(center) {
+
         let results = [];
         let testing, ret;
 
         for (let side = 0; side < 6; side++) { //direction 
 
             cube = neighbour(center, side);
+            //  console.log("center "+ center.q + " " + center.s);
             if ((myGame.allowJump == 2)) {
                 testing = $(`[hex='${cube.q} ${cube.s}'][player]`); // allow self jump ONLY if free move
-                console.log("Free Move " + freeMove);
             }
             else testing = $(`[hex='${cube.q} ${cube.s}'][player=${nextPlayer(currentPlayer)}]`); //jump over other player
+
             if (testing.length) {
                 newMove = hexAdd(cube, hexSubtract(cube, center));
-
+                // console.log("newMove " + newMove.q + " " + newMove.s);
                 found = allowedNeigh.find(function (value, index, array) { //TODO fix this
                     if (currentPlayer == 1) {
                         dir = hexSubtract(cube, center);
@@ -311,8 +286,8 @@ function gameGrid() {
                     ret = hexEquals(dir, value); //DUPLICATE functionality here
                     return ret; //DUPLICATE functionality here
                 }); //DUPLICATE functionality here
-
-                if (typeof (found) === "undefined") {
+                //  console.log(typeof(found));
+                if (typeof (found) === "object") {
                     results.push(newMove);
                 }
             }
@@ -467,23 +442,29 @@ function gameGrid() {
                     //TODO z-idex depends on rows
 
                     let t = last.attr("axial").split(" ");
-
                     let coordX = dropHex.css("top");
                     let coordY = dropHex.css("left");
-
                     let lastPlayer = last.attr("player");
+                    gridPos = dropHex.attr("hex").split(" ");
 
                     $(last).animate(
                         {
                             top: coordX,
                             left: coordY,
-                        }, 100, function () {
-                            last.attr("axial", dropHex.attr("hex"));
-                            dropHex.attr("player", lastPlayer);
-
-                            $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
-                        }
+                        }, 100
                     );
+
+                    $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
+                    $(dropHex).droppable({ disabled: true });
+
+                    distance = getDistance(anyHex(gridPos[0], gridPos[1]), anyHex(t[0], t[1]));
+                    if (distance > 1) {
+                        // console.log(last);
+                        jumpOne(dropHex);
+                    }
+
+                    last.attr("axial", dropHex.attr("hex"));
+                    dropHex.attr("player", lastPlayer);
 
                     if (currentChance === 1) {
                         currentPlayer = nextPlayer(currentPlayer);
@@ -502,9 +483,6 @@ function gameGrid() {
 
     function jumpOne(hex) {
 
-        // use direction and distance
-        // than add direction  and test
-        //difference player - destination -  will make direction/
 
         gridPos = $(hex).attr("hex").split(" ");
         playerPos = $(last).attr("axial").split(" ");
@@ -519,7 +497,8 @@ function gameGrid() {
         for (let i = 0; i < distance; i++) {
 
             testPos = hexAdd(testPos, dirHex);
-            testing = $(`[axial='${testPos.q} ${testPos.s}'][player=${nextPlayer(currentPlayer)}]`); //jump over other player
+
+            testing = $(`[axial='${testPos.q} ${testPos.s}'][player=${nextPlayer(currentPlayer)}]`);
             if (testing.length) {
                 removePlayerPiece(testing);
                 playerPiecesNr[currentPlayer]--;
@@ -532,12 +511,17 @@ function gameGrid() {
 
     function removePlayerPiece(piece) {
         $(piece).addClass("scale animate");
-        setTimeout(function () { $(piece).remove(); }, 1200);
+        setTimeout(function () {
+            t = $(piece).attr("axial").split(" ");
+            $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
+            $(piece).remove();
+        }, 1200);
     }
 
-    $(document).on('click', ".allowMove", function moveOne() {
+    $(document).off().on('click', ".allowMove", function moveOne() {
+        //.off().
+        //  console.log(arguments.callee.caller.name);
 
-        //TODO z-idex depends on rows
         let t = last.attr("axial").split(" ");
         let currentHex = anyHex(t[0], t[1]);
 
@@ -552,46 +536,43 @@ function gameGrid() {
         if ($(this).hasClass("allowJump")) {
             jumpOne($(this));
         }
-
-
         last.attr("axial", lastUsehex);
-        clickHex.attr("player", lastPlayer);
+        clickHex.attr("player", currentPlayer);
+
         $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
+        $(this).droppable({ disabled: true });
+
 
 
         $(last).animate(
             {
                 top: `${coordX}`,
                 left: `${coordY}`,
-            }, 200
+            }, 200, function () {
+                if (currentChance == 1) {
+                    currentPlayer = nextPlayer(currentPlayer);
+                    prepare(`${currentPlayer}`);
+                }
+                else {
+                    $(`.player${currentPlayer}`).unbind("click");
+                }
+            }
         );
 
-        if (currentChance == 1) {
-            currentPlayer = nextPlayer(currentPlayer);
-            prepare(`${currentPlayer}`);
-        }
-        else {
-            $(`.player${currentPlayer}`).unbind("click");
-        }
+
     });
 
     function playerPiceSelect(el) {
 
         setHelperText(2);
-
+        console.log("select");
         $(".blink").removeClass("blink");
         $($(el)).removeClass("short_blink");
-
         $(el).not(".grid_bg").addClass("blink");
-
         let t = $(el).attr("axial").split(" ");
-
-        // REMOVED - conflict with movement animation
-        // if (last && (last.attr("axial") != $(this).attr("axial"))) {
-        //     blinkingStop(last);
-        // }
-        // blinking($(this));
         last = $(el);
+
+        $(".ui-droppable").droppable({ disabled: true });
 
         if (showPossibleMoves == true) {
             let neighs = getHexRing(anyHex(t[0], t[1]), 1);
@@ -606,7 +587,6 @@ function gameGrid() {
         if (origAxial.length === 0) {
             origAxial = `${t[0]} ${t[1]}`;
             $(`[hex='${t[0]} ${t[1]}']`).droppable({ disabled: true });
-        } else {
         }
     }
 
@@ -616,11 +596,8 @@ function gameGrid() {
         showPossibleMoves = true;
 
         if (myGame.allowNoJumps == 1) { // player have to jump if possible dd
-
-
             setAllowFreeMove();
         }
-
 
         $("h2 span").html(player + " ");
 
@@ -667,9 +644,8 @@ function gameGrid() {
         if (newGame) {
             newGame = false;
         } else {
-            $(`.player${player == 1 ? 2 : 1}`).draggable('disable');
+            $(`.player${nextPlayer(player)}`).draggable('disable');
             $(`.player${player}`).draggable('enable');
-
             origAxial = '';
         }
     }
@@ -739,7 +715,7 @@ $(document).ready(function () {
     });
 
     function fixCSS(el) {
-        
+
 
         var attr = $(this).attr('hex');
         if (typeof attr !== typeof undefined && attr !== false) {
@@ -766,13 +742,13 @@ $(document).ready(function () {
                 $(this).css("top", y + "px");
 
             }
-        } 
+        }
 
     }
 
     $(window).resize(function () {
         vw2 = $(document).width();
-       
+
         $('[hex]').each(fixCSS);
         $('[axial]').each(fixCSS);
 
@@ -785,6 +761,7 @@ $(document).ready(function () {
 // ADMIN
 $("#generate").click(function () {
     $("#grid").empty();
+
     myGame = null;
     myGame = new Game();
 
@@ -798,6 +775,8 @@ $("#generate").click(function () {
     myGame.allowJump = $("#allow_jump:checked").val() ? parseInt($("#allow_jump:checked").val()) : 1;
 
     myGame.startGame();
+
+
 
 });
 
