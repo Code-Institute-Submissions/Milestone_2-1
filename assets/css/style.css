@@ -1,5 +1,5 @@
 body {
-     font-size: 1vw; 
+    font-size: 14px;
 }
 
 div {
@@ -34,61 +34,128 @@ hr, div, body {
 
 /* ----------------------------------------- */
 
+@media (orientation: landscape) {
+    #grid {
+        left: -4.9vh;
+        top: 4.9vh;
+    }
+    .hex {
+        width: 9.8vh;
+        height: 5.774vh;
+        margin: 2.887vh 0;
+        line-height: 6vh;
+        font-size: 1vh;
+    }
+    .hex:before, .hex:after {
+        width: 6.971vh;
+        height: 6.971vh;
+        left: 1.36447vh;
+    }
+    .hex:before {
+        top: -3.5355vh;
+    }
+    .hex:after {
+        bottom: -3.5355vh;
+    }
+    .cylinder {
+        margin-top: 2.5vh;
+        margin-left: 0.55vh;
+        width: 9vh;
+        height: 6.5vh;
+        border-radius: 4.5vh/2.25vh;
+    }
+    .cylinder:before {
+        top: calc(50% + .2vh);
+        width: 9vh;
+        height: 6.5vh;
+        border-radius: 4.5vh/2.25vh;
+    }
+    .cylinder:after {
+        bottom: calc(50% - .2vh);
+        width: 9vh;
+        height: 5vh;
+        border-radius: 4.5vh/2.25vh;
+    }
+}
+
+@media (orientation: portrait) {
+    #grid {
+        left: -4.9vw;
+        top: 4.9vw;
+    }
+    .hex {
+        width: 9.8vw;
+        height: 5.774vw;
+        margin: 2.887vw 0;
+        line-height: 6vw;
+        font-size: 1vw;
+    }
+    .hex:before, .hex:after {
+        width: 6.971vw;
+        height: 6.971vw;
+        left: 1.36447vw;
+    }
+    .hex:before {
+        top: -3.5355vw;
+    }
+    .hex:after {
+        bottom: -3.5355vw;
+    }
+    .cylinder {
+        margin-top: 2.5vw;
+        margin-left: 0.55vw;
+        width: 9vw;
+        height: 6.5vw;
+        border-radius: 4.5vw/2.25vw;
+    }
+    .cylinder:before {
+        top: calc(50% + .2vh);
+        width: 9vw;
+        height: 6.5vw;
+        border-radius: 4.5vw/2.25vw;
+    }
+    .cylinder:after {
+        bottom: calc(50% - .2vh);
+        width: 9vw;
+        height: 5vw;
+        border-radius: 4.5vw/2.25vw;
+    }
+}
+
 #grid {
     margin-top: 20px;
     position: relative;
-   left: -4.9vw;
-   top: 4.9vw;
-    
 }
 
 .grid_bg {
-   
-    /* padding-top: 64px;
-    padding-bottom: 40px;
-    position: relative; */
     border-radius: 25%;
-    
-  
 }
-/*  */
-/* TODO - fix size */
-/*   */
 
 .hex {
     position: absolute;
-    width: 9.8vw;
-    height: 5.774vw;
     background-color: #ffffff;
-    margin: 2.887vw 0;
     border-left: solid 2px #333333;
     border-right: solid 2px #333333;
     display: block;
     text-align: center;
-    line-height: 6vw;
 }
 
 .hex:before, .hex:after {
     content: "";
     position: absolute;
     z-index: 1;
-    width: 6.971vw;
-    height: 6.971vw;
     -webkit-transform: scaleY(0.5774) rotate(-45deg);
     -ms-transform: scaleY(0.5774) rotate(-45deg);
     transform: scaleY(0.5774) rotate(-45deg);
     background-color: inherit;
-    left: 1.36447vw;
 }
 
 .hex:before {
-    top: -3.5355vw;
     border-top: solid 2px #333333;
     border-right: solid 2px #333333;
 }
 
 .hex:after {
-    bottom: -3.5355vw;
     border-bottom: solid 2px #333333;
     border-left: solid 2px #333333;
 }
@@ -103,24 +170,19 @@ hr, div, body {
     cursor: pointer;
 }
 
-.hex.allowMove:hover  {
-    background: rgb(203, 189, 255) ;
+.hex.allowMove:hover {
+    background: rgb(203, 189, 255);
     cursor: pointer;
 }
 
 .ui-droppable-hover, hexHover {
     background: rgb(203, 189, 255) !important;
 }
+
 .cylinder {
     position: absolute;
     overflow: hidden;
     cursor: pointer;
-    margin-top: 2.5vw;
-    margin-left: 0.55vw;
-    width: 9vw;
-    height: 6.5vw;
-    border-radius: 4.5vw/2.25vw;
-    /* background-color: rgba(160, 160, 160, 1); */
     z-index: 99;
     -webkit-box-shadow: 18px -15px 12px -10px rgba(0, 0, 0, 1);
     -moz-box-shadow: 18px -15px 12px -10px rgba(0, 0, 0, 1);
@@ -130,28 +192,19 @@ hr, div, body {
 .cylinder:before {
     position: absolute;
     left: 0;
-    top: calc(50% + .2vh);
-    width: 9vw;
-    height: 6.5vw;
-    border-radius: 4.5vw/2.25vw;
-    /* background-color: rgba(160, 160, 160, 1); */
     content: '';
 }
 
 .cylinder:after {
     position: absolute;
     left: 0;
-    bottom: calc(50% - .2vh);
-    width: 9vw;
-    height: 5vw;
-    border-radius: 4.5vw/2.25vw;
-    background-color: rgba(160, 160, 160, 1);
     content: '';
 }
 
 .player1 {
     background-color: rgba(255, 0, 0, .5);
 }
+
 .player1:after, .playerOneTransp {
     background-color: rgba(255, 64, 64, .5);
 }
@@ -167,6 +220,7 @@ hr, div, body {
 .test {
     background-color: black;
 }
+
 @keyframes blink {
     50% {
         opacity: 0.75;
@@ -179,8 +233,6 @@ hr, div, body {
     }
 }
 
-
-
 .blink {
     animation: blink .5s step-start 0s infinite;
     -webkit-animation: blink .5s step-start 0s infinite;
@@ -191,37 +243,11 @@ hr, div, body {
     -webkit-animation: blink .5s step-start 0s 3;
 }
 
-
 .scale {
     transform: scale(1);
     transition: all 1s;
-  }
-  
-  .scale.animate {
+}
+
+.scale.animate {
     transform: scale(0.5);
-  }
-
-@keyframes drawArc {
-    0% {
-        transform: rotate(0deg) translateX(0px) rotate(0deg);
-    }
-    100% {
-        transform: rotate(-180deg) translateX(150px) rotate(180deg);
-    }
-}
-
-@-webkit-keyframes drawArc {
-    0% {
-        -webkit-transform: rotate(0deg) translateX(0px) rotate(0deg);
-    }
-    100% {
-        -webkit-transform: rotate(-180deg) translateX(150px) rotate(180deg);
-    }
-}
-
-.animateArc {
-    animation: drawArc 3s linear 1 forwards;
-    ;
-    -webkit-animation: drawArc 3s linear 1 forwards;
-    ;
 }

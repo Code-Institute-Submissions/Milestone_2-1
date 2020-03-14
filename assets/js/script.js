@@ -658,7 +658,11 @@ function gameGrid() {
 
 let timer;
 let last;
-let vw = $(document).width();
+let vw;
+if (window.matchMedia("(orientation: portrait)").matches) {
+vw = $(document).width();
+}
+else vw = $(document).height();
 
 function blinking(elm) {
 
@@ -747,13 +751,17 @@ $(document).ready(function () {
     }
 
     $(window).resize(function () {
-        vw2 = $(document).width();
+        if (window.matchMedia("(orientation: portrait)").matches) {
+            vw2 = $(document).width();
+            }
+            else vw2 = $(document).height();
 
         $('[hex]').each(fixCSS);
         $('[axial]').each(fixCSS);
 
         $(".grid_bg").css("width", `${.28 * vw2 * myGame.halfSize + 50}px`).css("height", `${.245 * vw2 * myGame.halfSize + 10}px`).css("margin-left", `10px`);
 
+       
     });
 });
 
