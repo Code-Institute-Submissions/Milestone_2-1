@@ -47,6 +47,7 @@ function gameGrid() {
     let freeMove = true; /// if not forced jump move or no jump detected
     let origAxial = '';
     let lastJump = false;
+    let lastJumpPos;
 
     function Hex(x, y, z) {
         this.q = x;
@@ -337,7 +338,7 @@ function gameGrid() {
                     //REMINDER - changed  $("#grid div").first() to $("#grid")
 
                     $("#grid").prepend(`<div class='hex' style="top:${coord.x}px; left:${coord.y}px"  hex="${axialR} ${axialQ}"></div>`);
-
+                    //${axialR}xxxxxxxxx${axialQ}
                     if (!horizontal) {
 
                         //TODO convert to function
@@ -470,7 +471,8 @@ function gameGrid() {
 
                     distance = getDistance(anyHex(gridPos[0], gridPos[1]), anyHex(t[0], t[1]));
                     if (distance > 1) {
-                        // console.log(last);
+                        lastJumpPos = last.attr("axial");
+                        console.log("seeting last drop " + lastJumpPos);
                         jumpOne(dropHex);
                     }
 
@@ -492,6 +494,16 @@ function gameGrid() {
                                 if (playerPiceSelect(last) == 0) {
                                     currentPlayer = nextPlayer(currentPlayer);  /// BAD DUPLICATE
                                     prepare(`${currentPlayer}`);  // BAD DUPLICATE
+                                }
+                                else if (playerPiceSelect(last) == 1) {
+                                    // lastJumpPos
+                                    // console.log(playerPiceSelect(last));
+                                    onlyOption = $(".allowMove").attr("hex");
+                                    //console.log(onlyOption, lastJumpPos);
+                                    if (onlyOption === lastJumpPos) {
+                                        currentPlayer = nextPlayer(currentPlayer);  /// BAD DUPLICATE
+                                        prepare(`${currentPlayer}`);  // BAD DUPLICATE
+                                    }
                                 }
                             }, 1200);
 
@@ -566,7 +578,8 @@ function gameGrid() {
         //use distance
         distance = getDistance(anyHex(t2[0], t2[1]), anyHex(t[0], t[1]));
         if (distance > 1) {
-            // if ($(this).hasClass("allowJump")) { // jump
+            lastJumpPos = last.attr("axial");
+            console.log("seeting last click " + lastJumpPos);
             jumpOne($(this));
         }
         last.attr("axial", lastUsehex);
@@ -595,6 +608,16 @@ function gameGrid() {
                             if (playerPiceSelect(last) == 0) {
                                 currentPlayer = nextPlayer(currentPlayer);  /// BAD DUPLICATE
                                 prepare(`${currentPlayer}`);  // BAD DUPLICATE
+                            }
+                            else if (playerPiceSelect(last) == 1) {
+                                // lastJumpPos
+                                // console.log(playerPiceSelect(last));
+                                onlyOption = $(".allowMove").attr("hex");
+                                //console.log(onlyOption, lastJumpPos);
+                                if (onlyOption === lastJumpPos) {
+                                    currentPlayer = nextPlayer(currentPlayer);  /// BAD DUPLICATE
+                                    prepare(`${currentPlayer}`);  // BAD DUPLICATE
+                                }
                             }
                         }, 1200);
                     }
@@ -626,7 +649,8 @@ function gameGrid() {
             let neighs = getHexRing(anyHex(t[0], t[1]), 1);
             $("div .allowMove").removeClass("allowMove");
             // neighs.forEach(showMove);
-            if (freeMove) neighs.forEach(element => showMove(element, false));
+            // if (freeMove) neighs.forEach(element => showMove(element, false));
+            if (!lastJump) neighs.forEach(element => showMove(element, false));
 
             let jumps = getJumps(anyHex(t[0], t[1]));
             jumpsNr = jumps.length;
@@ -644,6 +668,7 @@ function gameGrid() {
 
     function prepare(player) {
         lastJump = false;
+        lastJumpPos = "";
         setHelperText(1);
         showPossibleMoves = true;
 

@@ -15,14 +15,14 @@ $(function () {
     $("#rules-dialog").dialog({
         autoOpen: false,
         // modal: true,
-        width: 500,
+        width: 400,
         position: { my: "left top", at: "left bottom+64", of: '#rules-btn' }
     });
 
     $("#options-dialog").dialog({
         autoOpen: false,
         // modal: true,
-        width: 400,
+        width: 330,
         position: { my: "right top", at: "right bottom+64", of: '#settings-btn' },
         buttons: {
             "Apply Settings": changeSettings,
