@@ -1,12 +1,14 @@
-function changeSettings() {
-
-}
 $(function () {
+    function changeSettings() {
+
+    }
+
     $("#rules-dialog").dialog({
         autoOpen: false,
         // modal: true,
         position: { my: "left top", at: "left bottom+64", of: '#rules-btn' }
     });
+
     $("#options-dialog").dialog({
         autoOpen: false,
         // modal: true,
@@ -18,8 +20,21 @@ $(function () {
             }
         },
         close: function () {
-            document. getElementById('settings-form'). reset();
+            document.getElementById('settings-form').reset();
 
+        }
+    });
+
+    $("#win-dialog").dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            "Play Again": function () {
+                myGame = null;
+                myGame = new Game();
+                myGame.startGame();
+                $(this).dialog("close");
+            }
         }
     });
 

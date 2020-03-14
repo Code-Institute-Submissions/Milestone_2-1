@@ -8,8 +8,8 @@
 
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="assets/js/jquery-1.12.4.js"></script>
+    <script src="assets/js/jquery-ui.js"></script>
     <script src="assets/js/jquery.ui.touch-punch.min.js"></script>
 </head>
 
@@ -22,9 +22,9 @@
         </button>
         Player <span class="playerNumber"></span>Move
         <button id="settings-btn" class="ui-state-default ui-corner-all"
-        style="position: relative; float: right; margin:18px; ">
-        <span class="ui-icon ui-icon-wrench"></span>Game Options
-    </button>
+            style="position: relative; float: right; margin:18px; ">
+            <span class="ui-icon ui-icon-wrench"></span>Game Options
+        </button>
     </h2>
     <h2 id="move_info">Info here</h2>
     <div class="grid_bg playerOneTransp playerTwoTransp">
@@ -46,8 +46,8 @@
     <div id="options-dialog" title="Game Options">
         Game Options:
         <form id="settings-form">
-                <label for="name">Name</label>
-                <input type="text" name="name" id="name" value="Jane Smith" class="text ui-widget-content ui-corner-all">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" value="Jane Smith" class="text ui-widget-content ui-corner-all">
             <ol>
                 <li>Option 1</li>
                 <li>Rule two</li>
@@ -58,9 +58,17 @@
         </form>
     </div>
 
+    <div id="win-dialog" title="Game End">
+        <p>
+            <span class="ui-icon ui-icon-circle-check"></span>
+            <h2>Player <strong>1</strong> wins !</h2>
+        </p>
+    </div>
+
     <script type="text/javascript" src="assets/js/script.js"></script>
     <script src="assets/js/ui-dialog.js"></script>
-    
+
 
 </body>
+
 </html>

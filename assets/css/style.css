@@ -233,6 +233,11 @@ hr, div, body {
     float: right;
 }
 
+.ui-icon-circle-check {
+    float:left; 
+    margin:0 7px 50px 0;
+}
+
 .test {
     background-color: black;
 }
