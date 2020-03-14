@@ -35,11 +35,11 @@
 
     <div id="rules-dialog" title="Game Rules">
         <ol>
-            <li>Rule 1</li>
-            <li>Rule two</li>
-            <li>Rule tree</li>
-            <li>Rule four</li>
-            <li>Rule five</li>
+            <li>The object of the game is to capture all of your opponent's pieces</li>
+            <li>Players take turns to move one piece at the time</li>
+            <li>Pieces can jump over any adiacent piece if space is available</li>
+            <li>If a jump is made and another jump is available than player continues his moves</li>
+            <li>Game ends when a player has only one piece left</li>
         </ol>
     </div>
 
@@ -48,30 +48,30 @@
         <form id="settings-form">
 
             <p>Players position:</p>
-            <label for="radio-1">Horizontal</label>
-            <input type="radio" name="radio-1" id="radio-1" value="1">
             <label for="radio-2">Vertical</label>
             <input type="radio" name="radio-1" id="radio-2" value="0" checked>
+            <label for="radio-1">Horizontal</label>
+            <input type="radio" name="radio-1" id="radio-1" value="1">
 
-
-            <p>Grid Size:</p>
-            <!-- <label for="number">Grid size</label> -->
-            <select name="number" id="number">
-                <option value="1">1</option>
-                <option value="2" selected="selected">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
-        </form>
-
-        <p>Players pieces:</p>
+            <p>Players pieces:</p>
             <label for="radio-1a">1 Line</label>
             <input type="radio" name="radio-2" id="radio-1a" value="1">
             <label for="radio-2a">2 Lines</label>
             <input type="radio" name="radio-2" id="radio-2a" value="2" checked>
             <label for="radio-3a">3 Lines</label>
             <input type="radio" name="radio-2" id="radio-3a" value="3">
+
+            <p>Grid Size:</p>
+            <label for="radio-1b">5 x 5</label>
+            <input type="radio" name="radio-3" id="radio-1b" value="2">
+            <label for="radio-2b">7 x 7</label>
+            <input type="radio" name="radio-3" id="radio-2b" value="3" checked>
+            <label for="radio-3b">9 x 9</label>
+            <input type="radio" name="radio-3" id="radio-3b" value="4">
+
+        </form>
+
+
 
     </div>
 

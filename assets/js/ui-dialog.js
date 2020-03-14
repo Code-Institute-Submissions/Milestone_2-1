@@ -5,7 +5,7 @@ $(function () {
         myGame = new Game();
         myGame.horizontal = parseInt($("[name='radio-1']:checked").val());
         myGame.nrOfRows = parseInt($("[name='radio-2']:checked").val());
-        myGame.halfSize = parseInt($("#number").val());
+        myGame.halfSize = parseInt($("[name='radio-3']:checked").val());
 
         myGame.startGame();
 
@@ -15,6 +15,7 @@ $(function () {
     $("#rules-dialog").dialog({
         autoOpen: false,
         // modal: true,
+        width: 500,
         position: { my: "left top", at: "left bottom+64", of: '#rules-btn' }
     });
 
@@ -30,7 +31,7 @@ $(function () {
             }
         },
         close: function () {
-            document.getElementById('settings-form').reset();
+            // document.getElementById('settings-form').reset();
 
         }
     });
@@ -44,7 +45,8 @@ $(function () {
                 myGame = new Game();
                 myGame.horizontal = parseInt($("[name='radio-1']:checked").val());
                 myGame.nrOfRows = parseInt($("[name='radio-2']:checked").val());
-                myGame.halfSize = parseInt($("#number").val());
+                myGame.halfSize = parseInt($("[name='radio-3']:checked").val());
+     
                 myGame.startGame();
                 $(this).dialog("close");
             }
@@ -69,6 +71,6 @@ $(function () {
 
 
     $("input").checkboxradio();
-    $("#number").selectmenu();
+   
 
 });

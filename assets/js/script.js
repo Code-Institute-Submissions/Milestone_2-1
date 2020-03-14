@@ -336,8 +336,7 @@ function gameGrid() {
 
                     //REMINDER - changed  $("#grid div").first() to $("#grid")
 
-                    $("#grid").prepend(`<div class='hex' style="top:${coord.x}px; left:${coord.y}px"  hex="${axialR} ${axialQ}">
-                    ${axialR}xxxxxxxxx${axialQ}</div>`);
+                    $("#grid").prepend(`<div class='hex' style="top:${coord.x}px; left:${coord.y}px"  hex="${axialR} ${axialQ}"></div>`);
 
                     if (!horizontal) {
 
