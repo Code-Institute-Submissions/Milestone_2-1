@@ -1,4 +1,4 @@
-function Game(halfSize = 2, allowJump = 2, allowHorizontal = 2, allowBackwards = 2, secondChance = 1, allowNoJumps = 0, nrOfRows = 2, horizontal = 0) {
+function Game(halfSize = 3, allowJump = 2, allowHorizontal = 2, allowBackwards = 2, secondChance = 1, allowNoJumps = 0, nrOfRows = 2, horizontal = 0) {
 
 
     this.halfSize = halfSize; // radius of the grid
@@ -639,7 +639,7 @@ function gameGrid() {
             origAxial = `${t[0]} ${t[1]}`;
             $(`[hex='${t[0]} ${t[1]}']`).droppable({ disabled: true });
         }
-        console.log(" jumps length " + jumpsNr);
+        // console.log(" jumps length " + jumpsNr);
         return (jumpsNr);
     }
 

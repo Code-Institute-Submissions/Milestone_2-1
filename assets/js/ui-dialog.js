@@ -1,6 +1,15 @@
 $(function () {
     function changeSettings() {
 
+        myGame = null;
+        myGame = new Game();
+        myGame.horizontal = parseInt($("[name='radio-1']:checked").val());
+        myGame.nrOfRows = parseInt($("[name='radio-2']:checked").val());
+        myGame.halfSize = parseInt($("#number").val());
+
+        myGame.startGame();
+
+        $("#options-dialog").dialog("close");
     }
 
     $("#rules-dialog").dialog({
@@ -12,6 +21,7 @@ $(function () {
     $("#options-dialog").dialog({
         autoOpen: false,
         // modal: true,
+        width: 400,
         position: { my: "right top", at: "right bottom+64", of: '#settings-btn' },
         buttons: {
             "Apply Settings": changeSettings,
@@ -32,6 +42,9 @@ $(function () {
             "Play Again": function () {
                 myGame = null;
                 myGame = new Game();
+                myGame.horizontal = parseInt($("[name='radio-1']:checked").val());
+                myGame.nrOfRows = parseInt($("[name='radio-2']:checked").val());
+                myGame.halfSize = parseInt($("#number").val());
                 myGame.startGame();
                 $(this).dialog("close");
             }
@@ -53,5 +66,9 @@ $(function () {
             $("#options-dialog").dialog("close");
         }
     });
+
+
+    $("input").checkboxradio();
+    $("#number").selectmenu();
 
 });

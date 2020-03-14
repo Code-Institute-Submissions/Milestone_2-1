@@ -44,18 +44,35 @@
     </div>
 
     <div id="options-dialog" title="Game Options">
-        Game Options:
+
         <form id="settings-form">
-            <label for="name">Name</label>
-            <input type="text" name="name" id="name" value="Jane Smith" class="text ui-widget-content ui-corner-all">
-            <ol>
-                <li>Option 1</li>
-                <li>Rule two</li>
-                <li>Rule tree</li>
-                <li>Rule four</li>
-                <li>Rule five</li>
-            </ol>
+
+            <p>Players position:</p>
+            <label for="radio-1">Horizontal</label>
+            <input type="radio" name="radio-1" id="radio-1" value="1">
+            <label for="radio-2">Vertical</label>
+            <input type="radio" name="radio-1" id="radio-2" value="0" checked>
+
+
+            <p>Grid Size:</p>
+            <!-- <label for="number">Grid size</label> -->
+            <select name="number" id="number">
+                <option value="1">1</option>
+                <option value="2" selected="selected">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
         </form>
+
+        <p>Players pieces:</p>
+            <label for="radio-1a">1 Line</label>
+            <input type="radio" name="radio-2" id="radio-1a" value="1">
+            <label for="radio-2a">2 Lines</label>
+            <input type="radio" name="radio-2" id="radio-2a" value="2" checked>
+            <label for="radio-3a">3 Lines</label>
+            <input type="radio" name="radio-2" id="radio-3a" value="3">
+
     </div>
 
     <div id="win-dialog" title="Game End">
