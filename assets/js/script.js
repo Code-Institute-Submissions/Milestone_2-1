@@ -504,6 +504,9 @@ function gameGrid() {
                                         currentPlayer = nextPlayer(currentPlayer);  /// BAD DUPLICATE
                                         prepare(`${currentPlayer}`);  // BAD DUPLICATE
                                     }
+                                } else {
+                                    $(`[hex="${lastJumpPos}"]`).removeClass("allowMove");
+                                    $(`[hex="${lastJumpPos}"]`).draggable('disable');
                                 }
                             }, 1200);
 
@@ -618,6 +621,10 @@ function gameGrid() {
                                     currentPlayer = nextPlayer(currentPlayer);  /// BAD DUPLICATE
                                     prepare(`${currentPlayer}`);  // BAD DUPLICATE
                                 }
+                            }
+                            else {
+                                $(`[hex="${lastJumpPos}"]`).removeClass("allowMove");
+                                $(`[hex="${lastJumpPos}"]`).draggable('disable');
                             }
                         }, 1200);
                     }
