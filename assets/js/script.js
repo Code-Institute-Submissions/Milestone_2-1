@@ -431,7 +431,7 @@ function gameGrid() {
                 let dropHex = $(event.target);
                 lastJump = false;
 
-                if (dropHex.hasClass("allowMove")) {
+                if (dropHex.hasClass("allowMove")) { 
 
                     let t = last.attr("axial").split(" ");
                     let coordX = dropHex.css("top");
@@ -453,7 +453,6 @@ function gameGrid() {
                                 distance = getDistance(anyHex(gridPos[0], gridPos[1]), anyHex(t[0], t[1])); // one tile or longer jump
                                 if (distance > 1) {
                                     lastJumpPos = last.attr("axial");
-                                    console.log("seeting last drop " + lastJumpPos);
                                     jumpOne(dropHex);
                                 }
 
@@ -486,7 +485,6 @@ function gameGrid() {
                                             $(`[hex="${lastJumpPos}"]`).removeClass("allowMove");
                                             $(`[hex="${lastJumpPos}"]`).droppable('disable');
                                         }
-
                                     }
                                 }
                                 else { //end turn with button only
@@ -515,7 +513,7 @@ function gameGrid() {
         distance = getDistance(anyHex(gridPos[0], gridPos[1]), anyHex(playerPos[0], playerPos[1]));
         let testPos = anyHex(playerPos[0], playerPos[1]);
 
-        for (let i = 0; i < distance; i++) {
+        for (let i = 0; i < distance; i++) { // test in one direction
             testPos = hexAdd(testPos, dirHex);
             testing = $(`[axial='${testPos.q} ${testPos.s}'][player=${nextPlayer(currentPlayer)}]`);
             if (testing.length) {
@@ -537,7 +535,7 @@ function gameGrid() {
         }, 1200);
     }
 
-    $(document).off().on('click', ".allowMove", function moveOne() {
+    $(document).off().on('click', ".allowMove", function moveOne() { //click to move - TODO  - needs refactor
         lastJump = false;
         //  console.log(arguments.callee.caller.name);
         let t = last.attr("axial").split(" ");
@@ -553,20 +551,19 @@ function gameGrid() {
         distance = getDistance(anyHex(t2[0], t2[1]), anyHex(t[0], t[1]));
         if (distance > 1) {
             lastJumpPos = last.attr("axial");
-            console.log("seeting last click " + lastJumpPos);
             jumpOne($(this));
         }
         last.attr("axial", lastUsehex);
         clickHex.attr("player", currentPlayer);
 
         $(`[hex='${t[0]} ${t[1]}']`).removeAttr("player");
-        $(this).droppable({ disabled: true });
+        $(this).droppable({ disabled: true });  
 
         $(last).animate(
             {
                 top: `${coordX}`,
                 left: `${coordY}`,
-            }, 200, function () {
+            }, 200, function () { // TODO replace with start and test
                 if (currentChance == 1) {
                     if (lastJump == false) {
                         currentPlayer = nextPlayer(currentPlayer);
@@ -603,11 +600,9 @@ function gameGrid() {
         );
     });
 
-    function playerPiceSelect(el) {
+    function playerPiceSelect(el) { //piece gets selected on click or drag
         jumpsNr = 0;
-
         setHelperText(2);
-        console.log("select isJump " + lastJump);
 
         $(".blink").removeClass("blink");
         $($(el)).removeClass("short_blink");
@@ -638,13 +633,13 @@ function gameGrid() {
         return (jumpsNr);
     }
 
-    function prepare(player) {
+    function prepare(player) { // new turn, reset player
         lastJump = false;
         lastJumpPos = "";
         setHelperText(1);
         showPossibleMoves = true;
 
-        if (myGame.allowNoJumps == 1) { // player have to jump if possible dd
+        if (myGame.allowNoJumps == 1) { // player have to jump if possible
             setAllowFreeMove();
         }
 
@@ -728,15 +723,12 @@ function blinkingStop(elm) {
 
 
 function isDoubleClicked(element) {
-    //if already clicked return TRUE to indicate this click is not allowed
-    if (element.data("isclicked")) return true;
-    //mark as clicked for 1 second
+    if (element.data("isclicked")) return true; //if already clicked return TRUE to indicate this click is not allowed
     element.data("isclicked", true);
     setTimeout(function () {
         element.removeData("isclicked");
     }, 500);
-    //return FALSE to indicate this click was allowed
-    return false;
+    return false; //return FALSE to indicate this click was allowed
 }
 
 let myGame;
@@ -755,7 +747,7 @@ $(document).ready(function () {
         myGame.Grid.setPlayer(myGame.playerTurn);
     });
 
-    function fixCSS(el) {
+    function fixCSS(el) { // reposition hexes on grid - NOT working when changing devices on 
         var attr = $(this).attr('hex');
         if (typeof attr !== typeof undefined && attr !== false) {
             // Element has this attribute
@@ -796,7 +788,7 @@ $(document).ready(function () {
 
 
 // ADMIN
-$("#generate").click(function () {
+$("#generate").click(function () { // makes new game  - Adimn ONLY
     $("#grid").empty();
 
     myGame = null;
@@ -816,7 +808,7 @@ $("#generate").click(function () {
 
 //Misc
 
-function setHelperText(textId) {
+function setHelperText(textId) { // returns User help text
     let helperText;
     switch (textId) {
         case 1:
